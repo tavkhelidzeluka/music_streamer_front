@@ -1,38 +1,107 @@
-.App {
-  text-align: center;
+body {
+    background: #121212;
+    color: white;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.link {
+    color: white;
+    text-decoration: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.link:hover {
+    text-decoration: underline;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.songCard {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 3px;
+    box-sizing: border-box;
+    padding: 4px;
+    color: #a7a7a3;
+
 }
 
-.App-link {
-  color: #61dafb;
+.songCard:hover {
+    background: #2a2a2a;
+    cursor: pointer;
+    color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.songCardCover {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex: 3;
+}
+
+
+.mediaPlayer {
+    background: black;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.progressBarWrapper {
+    width: 100%;
+    height: 4px;
+    background: gray;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.progressBar {
+    width: 0;
+    height: 100%;
+    background: white;
+    position: relative;
+    border-radius: 10px;
+}
+
+.progressBarWrapper:hover .progressBar {
+    background: #22bf55;
+}
+
+.progressBarWrapper:hover .progressBarPoint {
+    display: block;
+}
+
+
+.progressBarWrapper:hover {
+    cursor: pointer;
+}
+
+.progressBarPoint {
+    width: 10px;
+    height: 10px;
+    z-index: 10;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    right: 0;
+    transform: translate(50%, -25%);
+    display: none;
+    transition: 0.3s ease;
+}
+
+.playButton {
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.playButton:hover {
+    transform: scale(1.1);
 }
