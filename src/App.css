@@ -1,11 +1,32 @@
-body {
-    background: #121212;
-    color: white;
+html, body, div#root {
+    height: 100vh;
+    margin: 0;
 }
+
+body {
+    background: black;
+    color: white;
+    overflow: hidden;
+    font-weight: 500;
+}
+
 
 .link {
     color: white;
     text-decoration: none;
+}
+
+.buttonLink {
+    color: #a7a7a3;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.buttonLink:hover {
+    color: white;
 }
 
 .link:hover {
@@ -20,13 +41,13 @@ body {
     box-sizing: border-box;
     padding: 4px;
     color: #a7a7a3;
-
 }
 
 .songCard:hover {
     background: #2a2a2a;
     cursor: pointer;
     color: white;
+    border-radius: 6px;
 }
 
 .songCardCover {
@@ -41,15 +62,12 @@ body {
 .mediaPlayer {
     background: black;
     color: white;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
     box-sizing: border-box;
+    flex: 0 1 100px;
 }
 
 .progressBarWrapper {
@@ -105,4 +123,11 @@ body {
 
 .playButton:hover {
     transform: scale(1.1);
+}
+
+
+.contentTile {
+    padding: 2rem;
+    background: #121212;
+    border-radius: 6px;
 }
