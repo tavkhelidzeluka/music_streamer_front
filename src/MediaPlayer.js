@@ -1,8 +1,14 @@
-import {forwardRef, useContext, useEffect, useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {SongContext} from "./contexts/songContext";
 import {SongCover} from "./components/SongCover";
 import {config} from "./config";
-import {PlayArrowOutlined, Pause, PauseOutlined, VolumeUpOutlined} from "@mui/icons-material";
+import {
+    PlayArrowOutlined,
+    PauseOutlined,
+    VolumeUpOutlined,
+    VolumeDownOutlined,
+    VolumeOffOutlined
+} from "@mui/icons-material";
 import {ProgressBarChangeable} from "./components/ProgressBarChangeable";
 
 const convertToMinute = (time) => {
@@ -35,6 +41,8 @@ const ControlButton = ({audioTagRef}) => {
 };
 
 const SoundControl = ({audioTagRef}) => {
+    const [volume, setVolume] = useState(1);
+
     return (
         <div style={{
             display: "flex",
@@ -43,12 +51,16 @@ const SoundControl = ({audioTagRef}) => {
             padding: "0 20px",
             gap: 6,
         }}>
-            <VolumeUpOutlined/>
+            {volume === 0 ? <VolumeOffOutlined/> : volume < 0.5 ? <VolumeDownOutlined/> : <VolumeUpOutlined/>}
+
             <ProgressBarChangeable width={"30%"}
                                    onMount={(ref) => {
                                        ref.current.style.width = `${audioTagRef.current.volume * 100}%`
                                    }}
-                                   onMouseDown={(progressPerc) => audioTagRef.current.volume = progressPerc}/>
+                                   onMouseDown={(progressPerc) => {
+                                       audioTagRef.current.volume = progressPerc;
+                                       setVolume(progressPerc);
+                                   }}/>
         </div>
     );
 };
