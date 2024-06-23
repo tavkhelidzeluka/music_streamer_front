@@ -35,7 +35,6 @@ export const ProgressBarChangeable = ({onMouseDown, width, onMount}) => {
         } else if (width > progressBarWrapper.clientWidth) {
             width = progressBarWrapper.clientWidth;
         }
-        console.log(width ,event.clientX - progressBarWrapper.offsetLeft);
 
         progressBarRef.current.style.width = `${width}px`;
         onMouseDown(progressPerc);

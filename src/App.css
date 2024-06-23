@@ -39,7 +39,7 @@ body {
     align-items: center;
     gap: 3px;
     box-sizing: border-box;
-    padding: 4px;
+    padding: 6px;
     color: #a7a7a3;
 }
 
@@ -67,7 +67,7 @@ body {
     justify-content: space-between;
     padding: 20px;
     box-sizing: border-box;
-    flex: 0 1 100px;
+    height: 100px;
 }
 
 .progressBarWrapper {
@@ -130,4 +130,6 @@ body {
     padding: 2rem;
     background: #121212;
     border-radius: 6px;
+    position: relative;
+    box-sizing: border-box;
 }
