@@ -8,7 +8,7 @@ import {routes} from "../routes";
 
 export const SongCard = ({song, album, number}) => {
     const {setCurrentView} = useContext(ViewContext);
-    const {currentSong, setCurrentSong, setSound} = useContext(SongContext);
+    const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
 
@@ -24,8 +24,8 @@ export const SongCard = ({song, album, number}) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}>
             {number && (
-                <div style={{flex: 0.2, textAlign: "center"}}>
-                    {currentSong && currentSong.id === song.id ? (
+                <div style={{flex: 0.2, textAlign: "center", color: !sound && currentSong && currentSong.id === song.id && "#22bf55"}}>
+                    {sound && currentSong && currentSong.id === song.id ? (
                         <DancingBlocks/>
                     ) : isHovered ? <PlayArrowRounded/> : number}
                 </div>
