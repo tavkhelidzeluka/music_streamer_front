@@ -1,4 +1,4 @@
-import {useContext, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {SongContext} from "./contexts/songContext";
 import {SongCover} from "./components/SongCover";
 import {config} from "./config";
@@ -19,6 +19,19 @@ const convertToMinute = (time) => {
 
 const ControlButton = ({audioTagRef}) => {
     const {sound, setSound} = useContext(SongContext);
+
+    const play = () => setSound(true);
+    const pause = () => setSound(false);
+
+    useEffect(() => {
+        audioTagRef.current.addEventListener("pause", pause);
+        audioTagRef.current.addEventListener("play", play);
+
+        return () => {
+            audioTagRef.current.removeEventListener("pause", pause);
+            audioTagRef.current.removeEventListener("play", play);
+        };
+    }, [sound]);
 
     const toggleMediaPlayer = () => {
         const audioTag = audioTagRef.current;
