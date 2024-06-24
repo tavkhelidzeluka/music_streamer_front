@@ -27,7 +27,7 @@ export const SongCard = ({song, album, number}) => {
                 </div>
             )}
             <SongCover song={song} album={album || song.album}/>
-            {album && (
+            {(song.album || album) && (
                 <div style={{flex: 1}}>
                     <span className="link">{song.album.title}</span>
                 </div>

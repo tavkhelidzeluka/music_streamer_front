@@ -20,10 +20,17 @@ export const SongList = () => {
         <>
             <div style={{
                 display: "flex",
-                padding: 2,
+                padding: 6,
                 marginBottom: '1rem',
                 borderBottom: "1px solid gray"
             }}>
+                <div
+                    style={{
+                        flex: 0.2,
+                        textAlign: "center"
+                    }}>
+                    #
+                </div>
                 <div
                     style={{
                         flex: 3,

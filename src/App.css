@@ -37,7 +37,6 @@ body {
     display: flex;
     width: 100%;
     align-items: center;
-    gap: 3px;
     box-sizing: border-box;
     padding: 6px;
     color: #a7a7a3;
