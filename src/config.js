@@ -6,6 +6,15 @@ export const config = {
         album: {
             list: `${API_BASE_URL}/albums/`,
             detail: (id) => `${API_BASE_URL}/albums/${id}/`,
+        },
+        playlist: {
+            list: `${API_BASE_URL}/playlists/`,
+            detail: (id) => `${API_BASE_URL}/playlists/${id}/`,
+        },
+        auth: {
+            token: `${API_BASE_URL}/api/token/`,
+            refresh: `${API_BASE_URL}/api/token/refresh/`,
+            verify: `${API_BASE_URL}/api/token/verify/`,
         }
     }
 };

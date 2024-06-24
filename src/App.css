@@ -10,6 +10,28 @@ body {
     font-weight: 500;
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    transition: 0.3s ease;
+    background: #555;
+    border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 
 .link {
     color: white;
@@ -33,7 +55,8 @@ body {
     text-decoration: underline;
 }
 
-.songCard {
+
+.songCard, .albumCard {
     display: flex;
     width: 100%;
     align-items: center;
@@ -42,11 +65,15 @@ body {
     color: #a7a7a3;
 }
 
-.songCard:hover {
+.songCard:hover, .albumCard:hover {
     background: #2a2a2a;
     cursor: pointer;
     color: white;
     border-radius: 6px;
+}
+
+.albumCard:hover {
+    background: #151515;
 }
 
 .songCardCover {
@@ -132,6 +159,7 @@ body {
     position: relative;
     box-sizing: border-box;
 }
+
 .dancingBlocks {
     display: flex;
     justify-content: center;
@@ -141,6 +169,7 @@ body {
     height: 10px;
     margin: 0 auto;
 }
+
 .dancingBlocks > * {
     background: #22bf55;
     width: 2px;
