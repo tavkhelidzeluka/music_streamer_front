@@ -3,11 +3,10 @@ import {SongContext} from "./contexts/songContext";
 import {SongCover} from "./components/SongCover";
 import {config} from "./config";
 import {
-    PlayArrowOutlined,
     PauseOutlined,
     VolumeUpOutlined,
     VolumeDownOutlined,
-    VolumeOffOutlined
+    VolumeOffOutlined, PlayArrow
 } from "@mui/icons-material";
 import {ProgressBarChangeable} from "./components/ProgressBarChangeable";
 
@@ -48,7 +47,7 @@ const ControlButton = ({audioTagRef}) => {
     return (
         <div onClick={toggleMediaPlayer} className="playButton">
             {sound ? <PauseOutlined style={{fill: "#000", fontSize: 34}}/> :
-                <PlayArrowOutlined style={{fill: "#000", fontSize: 34}}/>}
+                <PlayArrow style={{fill: "#000", fontSize: 34}}/>}
         </div>
     );
 };
