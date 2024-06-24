@@ -3,13 +3,17 @@ import {SongContext} from "../contexts/songContext";
 import {SongCover} from "./SongCover";
 import {PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
+import {ViewContext} from "../contexts/viewContext";
+import {routes} from "../routes";
 
 export const SongCard = ({song, album, number}) => {
+    const {setCurrentView} = useContext(ViewContext);
     const {currentSong, setCurrentSong, setSound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
+    const [album_,] = useState(song.album || album);
 
     const playSong = () => {
-        setCurrentSong({...song, album: song.album || album});
+        setCurrentSong({...song, album: album_});
         setSound(true);
     }
 
@@ -26,10 +30,10 @@ export const SongCard = ({song, album, number}) => {
                     ) : isHovered ? <PlayArrowRounded/> : number}
                 </div>
             )}
-            <SongCover song={song} album={album || song.album}/>
-            {(song.album || album) && (
+            <SongCover song={song} album={album_}/>
+            {(album_) && (
                 <div style={{flex: 1}}>
-                    <span className="link">{song.album.title}</span>
+                    <span className="link" onMouseDownCapture={() => setCurrentView(routes.album(album_.id))}>{album_.title}</span>
                 </div>
             )}
         </div>

@@ -138,14 +138,14 @@ body {
     align-items: end;
     gap: 2px;
     width: 35px;
-    height: 15px;
+    height: 10px;
     margin: 0 auto;
 }
 .dancingBlocks > * {
     background: #22bf55;
     width: 2px;
     height: 100%;
-    animation: blockDance 1.5s ease infinite;
+    animation: blockDance 0.9s ease infinite;
 }
 
 @keyframes blockDance {
