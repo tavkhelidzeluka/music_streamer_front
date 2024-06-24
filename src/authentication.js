@@ -22,6 +22,7 @@ export const validateToken = async () => {
             })
         }
     );
+
     return response.ok;
 };
 

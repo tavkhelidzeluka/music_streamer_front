@@ -138,6 +138,7 @@ const router = createBrowserRouter([
         element: <Home/>,
         loader: async () => {
             const tokenIsValid = await validateToken();
+            console.log(tokenIsValid)
 
             if (!tokenIsValid)
                 throw redirect('/sign/in/');
@@ -148,13 +149,6 @@ const router = createBrowserRouter([
     {
         path: '/sign/in/',
         element: <SignIn/>,
-        loader: async () => {
-            const tokenIsValid = await validateToken();
-            if (!tokenIsValid)
-                throw redirect("/sign/in/");
-
-            throw redirect("/")
-        }
     }
 ]);
 
