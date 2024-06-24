@@ -133,3 +133,30 @@ body {
     position: relative;
     box-sizing: border-box;
 }
+.dancingBlocks {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 2px;
+    width: 35px;
+    height: 15px;
+    margin: 0 auto;
+}
+.dancingBlocks > * {
+    background: #22bf55;
+    width: 2px;
+    height: 100%;
+    animation: blockDance 1.5s ease infinite;
+}
+
+@keyframes blockDance {
+    0% {
+        height: 10%;
+    }
+    50% {
+        height: 100%;
+    }
+    100% {
+        height: 10%;
+    }
+}

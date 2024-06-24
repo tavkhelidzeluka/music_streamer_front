@@ -1,50 +1,7 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
-import {SongCover} from "../components/SongCover";
-import {SongContext} from "../contexts/songContext";
-import {PlayArrowRounded} from "@mui/icons-material";
 
-
-const AlbumSong = ({song, album, number}) => {
-    const {setCurrentSong, setSound} = useContext(SongContext);
-    const [isHovered, setIsHovered] = useState(false);
-
-    const playSong = (song) => {
-        setCurrentSong(song);
-        setSound(true);
-    }
-    return (
-        <div
-            key={song.id}
-            className="songCard"
-            onClick={() => playSong({...song, album: album})}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            <div style={{flex: 0.2, textAlign: "center"}}>
-                {isHovered ? <PlayArrowRounded/> : number}
-            </div>
-
-            <div className="songCardCover">
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    textAlign: "start",
-                }}>
-                    <span style={{color: "white"}}>{song.name}</span>
-                    <div className="songCardArtists">
-                        {song.artists.map((artist, i) => (
-                            <a key={artist.id} href="#" className="link">
-                                <small>{i !== 0 && "*"}{artist.name}</small>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
 export const AlbumView = ({id}) => {
     const [songs, setSongs] = useState([]);
     const [album, setAlbum] = useState(null);
@@ -102,7 +59,7 @@ export const AlbumView = ({id}) => {
                     Song
                 </div>
             </div>
-            {songs.map((song, i) => <AlbumSong key={song.id} song={song} album={album} number={i + 1}/>)}
+            {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
         </>
     );
 };

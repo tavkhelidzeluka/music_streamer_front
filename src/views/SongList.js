@@ -37,7 +37,7 @@ export const SongList = () => {
                     Album
                 </div>
             </div>
-            {songs.map(song => <SongCard key={song.id} song={song}/>)}
+            {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
         </>
     );
 };

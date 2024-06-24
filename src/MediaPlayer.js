@@ -101,7 +101,7 @@ export const MediaPlayer = () => {
 
     return (
         <div className="mediaPlayer">
-            {currentSong ? <SongCover song={currentSong}/> : <div className="songCardCover"></div>}
+            {currentSong ? <SongCover song={currentSong} album={currentSong.album} indicatePlaying={false}/> : <div className="songCardCover"></div>}
             <div style={{
                 flex: 6,
                 display: "flex",
