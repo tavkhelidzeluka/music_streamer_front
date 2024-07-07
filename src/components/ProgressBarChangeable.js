@@ -1,8 +1,13 @@
 import {useEffect, useRef, useState} from "react";
 
-export const ProgressBarChangeable = ({onMouseDown, width, intervalCallback}) => {
+export const ProgressBarChangeable = ({onMouseDown, width, intervalCallback, onMountCallback}) => {
     const [isDragging, setIsDragging] = useState(false);
     const progressBarRef = useRef();
+
+    useEffect(() => {
+        onMountCallback && onMountCallback(progressBarRef);
+    }, []);
+
 
     useEffect(() => {
         const interval = intervalCallback && intervalCallback(progressBarRef);

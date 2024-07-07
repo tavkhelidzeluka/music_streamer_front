@@ -71,7 +71,7 @@ const SoundControl = ({audioTagRef}) => {
             {volume === 0 ? <VolumeOffOutlined/> : volume < 0.5 ? <VolumeDownOutlined/> : <VolumeUpOutlined/>}
 
             <ProgressBarChangeable width={"30%"}
-                                   onMount={(ref) => {
+                                   onMountCallback={(ref) => {
                                        ref.current.style.width = `${audioTagRef.current.volume * 100}%`
                                    }}
                                    onMouseDown={(progressPerc) => {
@@ -130,7 +130,7 @@ export const MediaPlayer = () => {
                     {timeIndicator.current}
                     <ProgressBarChangeable
                         width={`100%`}
-                        onMount={updateSoundProgressBar}
+                        intervalCallback={updateSoundProgressBar}
                         onMouseDown={(progressPerc) => {
                             audioTagRef.current.currentTime = parseInt(audioTagRef.current.duration * progressPerc);
                         }}/>
