@@ -176,10 +176,17 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-    const [currentSong, setCurrentSong] = useState(null);
+    const [currentSong, setCurrentSong] = useState(
+        JSON.parse(localStorage.getItem("currentSong"))
+    );
     const [sound, setSound] = useState(false);
     const [currentView, setCurrentView] = useState(routes.songs);
     const [user, setUser] = useState(getUser());
+
+    useEffect(() => {
+        localStorage.setItem("currentSong", JSON.stringify(currentSong));
+    }, [currentSong]);
+
 
     return (
         <UserContext.Provider value={{user, setUser}}>
