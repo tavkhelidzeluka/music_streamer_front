@@ -7,12 +7,14 @@ import {ViewContext} from "../contexts/viewContext";
 import {routes} from "../routes";
 import {config} from "../config";
 import {UserContext} from "../contexts/userContext";
+import axios from "axios";
 
 export const SongCard = ({song, album, number}) => {
     const {setCurrentView} = useContext(ViewContext);
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
+    const [addToPlaylist, setAddToPlaylist] = useState([]);
     const {user} = useContext(UserContext);
 
     const playSong = () => {
@@ -20,10 +22,13 @@ export const SongCard = ({song, album, number}) => {
         setSound(true);
     }
 
+    const pauseSong = () => {
+        setSound(false);
+    }
+
     return (
         <div
             className="songCard"
-            onClick={playSong}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}>
             {number && (
@@ -33,8 +38,10 @@ export const SongCard = ({song, album, number}) => {
                     color: !sound && currentSong && currentSong.id === song.id && "#22bf55"
                 }}>
                     {sound && currentSong && currentSong.id === song.id ? (
-                        <DancingBlocks/>
-                    ) : isHovered ? <PlayArrowRounded/> : number}
+                        <div onClick={pauseSong}>
+                            <DancingBlocks/>
+                        </div>
+                    ) : isHovered ? <PlayArrowRounded onClick={playSong}/> : number}
                 </div>
             )}
             <SongCover song={song} album={album_}/>
@@ -44,22 +51,50 @@ export const SongCard = ({song, album, number}) => {
                           onMouseDownCapture={() => setCurrentView(routes.album(album_.id))}>{album_.title}</span>
                 </div>
             )}
-            {isHovered && (
-                <div onMouseDownCapture={async () => {
-                    const response = await fetch(
-                        config.api.playlist.list,
-                        {
-                            headers: {
-                                "Authorization": `Bearer ${user.access``}`
-                            }
-                        }
-                    )
+            <div style={{flex: 0.2}}>
+                {isHovered && (
+                    <div style={{position: "relative"}}
+                         onMouseDownCapture={async () => {
+                             const response = await axios.get(
+                                 config.api.playlist.list,
+                             )
 
-                    console.log(song.id);
-                }}>
-                    <AddCircleOutline/>
-                </div>
-            )}
+                             const data = await response.data;
+                             setAddToPlaylist(data);
+                         }}>
+                        <AddCircleOutline/>
+                        {addToPlaylist && (
+                            <div style={{
+                                position: "absolute",
+                                width: 150,
+                                zIndex: 10,
+                                left: -100,
+                                display: "flex",
+                                justifyContent: "center"
+                            }}>
+                                {addToPlaylist.map(playlist => (
+                                    <div key={playlist.id}
+                                         onClick={async () => {
+                                             const response = await axios.post(
+                                                 config.api.playlist.addSong(playlist.id),
+                                                 {
+                                                     song_id: song.id
+                                                 },
+                                             )
+
+                                             const data = await response.data;
+                                             console.log(data);
+                                             setAddToPlaylist([]);
+                                         }}>
+                                        {playlist.name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

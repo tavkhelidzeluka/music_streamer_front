@@ -10,6 +10,7 @@ export const config = {
         playlist: {
             list: `${API_BASE_URL}/playlists/`,
             detail: (id) => `${API_BASE_URL}/playlists/${id}/`,
+            addSong: (id) => `${API_BASE_URL}/playlists/${id}/add_song/`,
         },
         auth: {
             token: `${API_BASE_URL}/api/token/`,

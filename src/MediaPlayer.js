@@ -23,6 +23,11 @@ const ControlButton = ({audioTagRef}) => {
     const pause = () => setSound(false);
 
     useEffect(() => {
+        if (!sound) {
+            audioTagRef.current.pause();
+        } else {
+            audioTagRef.current.play();
+        }
         audioTagRef.current.addEventListener("pause", pause);
         audioTagRef.current.addEventListener("play", play);
 
@@ -100,7 +105,8 @@ export const MediaPlayer = () => {
 
     return (
         <div className="mediaPlayer">
-            {currentSong ? <SongCover song={currentSong} album={currentSong.album} indicatePlaying={false}/> : <div className="songCardCover"></div>}
+            {currentSong ? <SongCover song={currentSong} album={currentSong.album} indicatePlaying={false}/> :
+                <div className="songCardCover"></div>}
             <div style={{
                 flex: 6,
                 display: "flex",

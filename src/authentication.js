@@ -1,6 +1,6 @@
-import {UserContext} from "./contexts/userContext";
-import {useContext} from "react";
 import {config} from "./config";
+import axios from "axios";
+
 
 
 export const getUser = () => JSON.parse(localStorage.getItem("user"));
@@ -8,40 +8,37 @@ export const getUser = () => JSON.parse(localStorage.getItem("user"));
 export const saveUser = (user) => localStorage.setItem("user", JSON.stringify(user));
 
 export const validateToken = async () => {
-    const {access} = getUser("user");
+    const user =  getUser("user");
 
-    const response = await fetch(
-        config.api.auth.verify,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+    if (!user)
+        return;
+    const {access} = user;
+
+    try {
+        const response = await axios.post(
+            config.api.auth.verify,
+            {
                 token: access
-            })
-        }
-    );
+            }
+        )
+        return response.status === 200;
+    } catch (e) {
+        return await refreshToken();
+    }
 
-    return response.ok;
 };
 
 export const authenticate = async (username, password) => {
-    const response = await fetch(
+    const response = await axios.post(
         config.api.auth.token,
         {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username, password
-            })
+            username,
+            password
         }
-    );
+    )
 
-    if (response.ok) {
-        const data = await response.json();
+    if (response.status === 200) {
+        const data = await response.data;
         const user = {...data, username}
         saveUser(user);
         return user;
@@ -68,7 +65,8 @@ export const refreshToken = async () => {
     if (response.ok) {
         const data = await response.json();
         saveUser({...user, ...data});
-
-        return data;
+    } else {
+        saveUser({});
     }
+    return response.ok;
 };

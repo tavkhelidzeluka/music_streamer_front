@@ -3,6 +3,7 @@ import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {LibraryMusic} from "@mui/icons-material";
 import {UserContext} from "../contexts/userContext";
+import axios from "axios";
 
 export const PlaylistView = ({id}) => {
     const [songs, setSongs] = useState([]);
@@ -12,15 +13,10 @@ export const PlaylistView = ({id}) => {
 
     useEffect(() => {
         const fetchPlaylist = async () => {
-            const response = await fetch(
+            const response = await axios.get(
                 config.api.playlist.detail(id),
-                {
-                    headers: {
-                        "Authorization": `Bearer ${user.access}`
-                    }
-                }
             );
-            const data = await response.json();
+            const data = await response.data;
             setSongs(data.songs);
             setPlaylist(data);
         }

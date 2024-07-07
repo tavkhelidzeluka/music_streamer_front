@@ -43,6 +43,12 @@ export const SongList = () => {
                     }}>
                     Album
                 </div>
+                <div
+                    style={{
+                        flex: 0.2,
+                    }}>
+
+                </div>
             </div>
             {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
         </>

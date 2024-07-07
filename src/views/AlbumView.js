@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
+import axios from "axios";
 
 export const AlbumView = ({id}) => {
     const [songs, setSongs] = useState([]);
@@ -9,8 +10,8 @@ export const AlbumView = ({id}) => {
 
     useEffect(() => {
         const fetchAlbum = async () => {
-            const response = await fetch(config.api.album.detail(id));
-            const data = await response.json();
+            const response = await axios.get(config.api.album.detail(id));
+            const data = await response.data;
             setSongs(data.song_set);
             setAlbum(data);
         }

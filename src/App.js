@@ -8,7 +8,28 @@ import {ViewContext} from "./contexts/viewContext";
 import {UserContext} from "./contexts/userContext";
 import {routes} from "./routes";
 import {createBrowserRouter, redirect, RouterProvider, useNavigate} from "react-router-dom";
-import {authenticate, getUser, validateToken} from "./authentication";
+import {authenticate, getUser, refreshToken, validateToken} from "./authentication";
+import axios from "axios";
+
+axios.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            await refreshToken();
+            return axios(originalRequest);
+        }
+        return Promise.reject(error);
+    }
+);
+
+axios.interceptors.request.use((request) => {
+    const {access} = JSON.parse(localStorage.getItem("user"));
+    request.headers.Authorization = `Bearer ${access}`;
+    return request;
+});
+
 
 const Home = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -19,16 +40,19 @@ const Home = () => {
 
     useEffect(() => {
         const fetchAlbums = async () => {
-            const response = await fetch(
-                config.api.playlist.list,
-                {
-                    headers: {
-                        "Authorization": `Bearer ${user.access}`
-                    }
+            try {
+
+                const response = await axios.get(
+                    config.api.playlist.list
+                );
+                const data = await response.data;
+                setPlaylists(data);
+            } catch (e) {
+                if (e.response && e.response === 401) {
+                    navigate("sign/in");
                 }
-            );
-            const data = await response.json();
-            setPlaylists(data);
+            }
+
         }
         user && fetchAlbums();
     }, [user]);
@@ -138,7 +162,6 @@ const router = createBrowserRouter([
         element: <Home/>,
         loader: async () => {
             const tokenIsValid = await validateToken();
-            console.log(tokenIsValid)
 
             if (!tokenIsValid)
                 throw redirect('/sign/in/');
