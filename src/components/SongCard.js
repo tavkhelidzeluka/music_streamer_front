@@ -64,16 +64,10 @@ export const SongCard = ({song, album, number}) => {
                          }}>
                         <AddCircleOutline/>
                         {addToPlaylist && (
-                            <div style={{
-                                position: "absolute",
-                                width: 150,
-                                zIndex: 10,
-                                left: -100,
-                                display: "flex",
-                                justifyContent: "center"
-                            }}>
+                            <div className="addToPlaylistPopUp">
                                 {addToPlaylist.map(playlist => (
                                     <div key={playlist.id}
+                                         className="popUpItem"
                                          onClick={async () => {
                                              const response = await axios.post(
                                                  config.api.playlist.addSong(playlist.id),

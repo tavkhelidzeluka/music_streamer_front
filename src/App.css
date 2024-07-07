@@ -188,3 +188,24 @@ body {
         height: 10%;
     }
 }
+
+.addToPlaylistPopUp {
+    position: absolute;
+    width: 150px;
+    transform: translateX(-100%);
+    z-index: 10;
+    background: #121212;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+}
+
+.popUpItem {
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.popUpItem:hover {
+    background: #2a2a2a;
+}
