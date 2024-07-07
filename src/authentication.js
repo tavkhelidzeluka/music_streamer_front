@@ -2,13 +2,12 @@ import {config} from "./config";
 import axios from "axios";
 
 
-
 export const getUser = () => JSON.parse(localStorage.getItem("user"));
 
 export const saveUser = (user) => localStorage.setItem("user", JSON.stringify(user));
 
 export const validateToken = async () => {
-    const user =  getUser("user");
+    const user = getUser("user");
 
     if (!user)
         return;
@@ -49,24 +48,18 @@ export const authenticate = async (username, password) => {
 export const refreshToken = async () => {
     const user = getUser("user");
 
-    const response = await fetch(
+    const response = await axios.post(
         config.api.auth.refresh,
         {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                refresh: user.refresh
-            })
+            refresh: user.refresh
         }
     );
-
-    if (response.ok) {
-        const data = await response.json();
+    const statusOk = response.status === 200
+    if (statusOk) {
+        const data = await response.data;
         saveUser({...user, ...data});
     } else {
         saveUser({});
     }
-    return response.ok;
+    return statusOk;
 };
