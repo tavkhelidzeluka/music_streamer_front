@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from "react";
 
-export const ProgressBarChangeable = ({onMouseDown, width, onMount}) => {
+export const ProgressBarChangeable = ({onMouseDown, width, intervalCallback}) => {
     const [isDragging, setIsDragging] = useState(false);
     const progressBarRef = useRef();
 
     useEffect(() => {
-        onMount && onMount(progressBarRef);
+        const interval = intervalCallback && intervalCallback(progressBarRef);
 
         const handleMouseMove = (event) => {
             if (isDragging) {
@@ -23,18 +23,20 @@ export const ProgressBarChangeable = ({onMouseDown, width, onMount}) => {
         return () => {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
+            interval && clearInterval(interval);
         };
     }, [isDragging]);
 
     const updateBar = (event) => {
         const progressBarWrapper = progressBarRef.current.parentNode;
         let width = event.clientX - progressBarWrapper.offsetLeft;
-        let progressPerc = progressBarRef.current.clientWidth / progressBarWrapper.clientWidth;
+
         if (width < 0) {
             width = 0;
         } else if (width > progressBarWrapper.clientWidth) {
             width = progressBarWrapper.clientWidth;
         }
+        let progressPerc = width / progressBarWrapper.clientWidth;
 
         progressBarRef.current.style.width = `${width}px`;
         onMouseDown(progressPerc);
@@ -47,6 +49,7 @@ export const ProgressBarChangeable = ({onMouseDown, width, onMount}) => {
                     setIsDragging(true);
                     updateBar(event);
                 }}
+                onClick={updateBar}
                 className="progressBarWrapper">
                 <div
                     ref={progressBarRef}

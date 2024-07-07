@@ -25,7 +25,7 @@ axios.interceptors.response.use(
 );
 
 axios.interceptors.request.use((request) => {
-    const {access} = JSON.parse(localStorage.getItem("user"));
+    const {access} = getUser();
     request.headers.Authorization = `Bearer ${access}`;
     return request;
 });

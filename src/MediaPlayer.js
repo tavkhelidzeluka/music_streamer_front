@@ -90,17 +90,20 @@ export const MediaPlayer = () => {
 
 
     const updateSoundProgressBar = (ref) => {
-        setInterval(() => {
+        const changeBar = () => {
             const audioTag = audioTagRef.current;
             if (!audioTag)
                 return
-            ref.current.style.width = `${audioTag.currentTime / audioTag.duration * 100}%`;
 
+            ref.current.style.width = `${audioTag.currentTime / audioTag.duration * 100}%`;
             setTimeIndicator({
                 current: convertToMinute(audioTag.currentTime),
                 duration: convertToMinute(audioTag.duration),
             });
-        }, 100);
+        }
+        const interval = setInterval(changeBar, 1000);
+        changeBar();
+        return interval;
     };
 
     return (
@@ -129,7 +132,7 @@ export const MediaPlayer = () => {
                         width={`100%`}
                         onMount={updateSoundProgressBar}
                         onMouseDown={(progressPerc) => {
-                            audioTagRef.current.currentTime = parseInt(audioTagRef.current.duration * progressPerc)
+                            audioTagRef.current.currentTime = parseInt(audioTagRef.current.duration * progressPerc);
                         }}/>
                     {timeIndicator.duration}
                 </div>
