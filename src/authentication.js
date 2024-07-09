@@ -1,5 +1,5 @@
 import {config} from "./config";
-import axios from "axios";
+import axios, {interceptors} from "axios";
 
 
 export const getUser = () => JSON.parse(localStorage.getItem("user"));
@@ -48,18 +48,21 @@ export const authenticate = async (username, password) => {
 export const refreshToken = async () => {
     const user = getUser("user");
 
-    const response = await axios.post(
-        config.api.auth.refresh,
-        {
-            refresh: user.refresh
-        }
-    );
-    const statusOk = response.status === 200
-    if (statusOk) {
+    try {
+        console.log("refreshing")
+        const response = await axios.post(
+            config.api.auth.refresh,
+            {
+                refresh: user.refresh
+            },
+        );
+
         const data = await response.data;
         saveUser({...user, ...data});
-    } else {
+        return true;
+    } catch (e) {
+
         saveUser({});
+        return false;
     }
-    return statusOk;
 };
