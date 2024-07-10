@@ -1,5 +1,5 @@
 import {useContext, useState} from "react";
-import {SongContext} from "../contexts/songContext";
+import {SongContext} from "../context/songContext";
 import {PlayArrowRounded} from "@mui/icons-material";
 
 

@@ -1,16 +1,24 @@
 import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
+import usePrivateAPIClient from "../hooks/usePrivateClient";
+import {useNavigate} from "react-router-dom";
+import {APIClient, APIClientSecure} from "../api";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
+    const APIClientPrivate = usePrivateAPIClient();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSongs = async () => {
-            const response = await fetch(config.api.songs);
-            const data = await response.json();
-            setSongs(data);
-
+            try {
+                const response = await APIClientSecure.get(config.api.songs);
+                const data = await response.data;
+                setSongs(data);
+            } catch (error) {
+                navigate("/sign/in/");
+            }
         };
 
         fetchSongs();

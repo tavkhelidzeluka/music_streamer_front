@@ -14,7 +14,7 @@ export const config = {
         },
         auth: {
             token: `${API_BASE_URL}/api/token/`,
-            refresh: `${API_BASE_URL}/api/token/refresh/`,
+            refresh: `/api/token/refresh/`,
             verify: `${API_BASE_URL}/api/token/verify/`,
         }
     }

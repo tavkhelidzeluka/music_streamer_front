@@ -1,22 +1,43 @@
-import {useContext, useState} from "react";
-import {UserContext} from "../contexts/userContext";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {authenticate} from "../authentication";
+import {APIClient, APIClientSecure} from "../api";
+import {config} from "../config";
+import useAuth from "../hooks/useAuth";
+import usePrivateAPIClient from "../hooks/usePrivateClient";
 
 export const SignInView = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const {setUser} = useContext(UserContext);
+    const {setAuth} = useAuth();
+
     const navigate = useNavigate();
 
 
     const submit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const userData = await authenticate(username, password);
-        if (userData) {
-            setUser(userData);
+        try {
+            const response = await APIClientSecure.post(
+                config.api.auth.token,
+                {
+                    username, password
+                },
+            );
+
+            const data = await response.data;
+            console.log(data);
+            setAuth({username});
             navigate("/");
+        } catch (error) {
+            console.log(error);
+            switch (error?.response?.status) {
+                case 401:
+                    console.log("Unauthorized");
+                    break;
+                default:
+                    console.log("No server response");
+                    break;
+            }
         }
     };
 

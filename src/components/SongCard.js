@@ -1,13 +1,60 @@
 import {useContext, useState} from "react";
-import {SongContext} from "../contexts/songContext";
+import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
 import {AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
-import {ViewContext} from "../contexts/viewContext";
+import {ViewContext} from "../context/viewContext";
 import {routes} from "../routes";
 import {config} from "../config";
-import {UserContext} from "../contexts/userContext";
+import {AuthProvider} from "../context/AuthProvider";
 import axios from "axios";
+import {Checkbox, createTheme, Popover, Typography} from "@mui/material";
+
+const SongManageButton = ({playlist}) => {
+    const [anchorElem, setAnchorElem] = useState(null);
+    const open = Boolean(anchorElem);
+
+    const handleOpen = (event) => {
+        setAnchorElem(event.target)
+    };
+
+    const handleClose = () => {
+        setAnchorElem(null)
+    }
+
+    return (
+        <div>
+            <Typography
+                aria-owns={open ? 'mouse-over-popover' : undefined}
+                aria-haspopup="true"
+                onClick={(event) => open ? handleClose() : handleOpen(event)}
+            >
+                <AddCircleOutline/>
+            </Typography>
+            <Popover
+                open={open}
+                anchorEl={anchorElem}
+                onClose={handleClose}
+                disableRestoreFocus
+                sx={{
+                    borderRadius: 6
+                }}
+            >
+                <div className="addToPlaylistPopUp">
+                    {playlist && (
+                        playlist.map(playlist => (
+                            <div key={playlist.id}>
+                                {playlist.name}
+                                <Checkbox/>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </Popover>
+        </div>
+    );
+}
+
 
 export const SongCard = ({song, album, number}) => {
     const {setCurrentView} = useContext(ViewContext);
@@ -15,7 +62,6 @@ export const SongCard = ({song, album, number}) => {
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
     const [addToPlaylist, setAddToPlaylist] = useState([]);
-    const {user} = useContext(UserContext);
 
     const playSong = () => {
         setCurrentSong({...song, album: album_});
@@ -62,30 +108,7 @@ export const SongCard = ({song, album, number}) => {
                              const data = await response.data;
                              setAddToPlaylist(data);
                          }}>
-                        <AddCircleOutline/>
-                        {addToPlaylist && (
-                            <div className="addToPlaylistPopUp">
-                                {addToPlaylist.map(playlist => (
-                                    <div key={playlist.id}
-                                         className="popUpItem"
-                                         onClick={async () => {
-                                             const response = await axios.post(
-                                                 config.api.playlist.addSong(playlist.id),
-                                                 {
-                                                     song_id: song.id
-                                                 },
-                                             )
-
-                                             const data = await response.data;
-                                             console.log(data);
-                                             setAddToPlaylist([]);
-                                         }}>
-                                        {playlist.name}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
+                        <SongManageButton playlist={addToPlaylist}/>
                     </div>
                 )}
             </div>

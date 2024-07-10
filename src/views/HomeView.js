@@ -1,38 +1,34 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {routes} from "../routes";
-import {UserContext} from "../contexts/userContext";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import {config} from "../config";
 import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
+import usePrivateAPIClient from "../hooks/usePrivateClient";
+import {SongList} from "./SongList";
+import {APIClient, APIClientSecure} from "../api";
 
 
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
-    const [currentView, setCurrentView] = useState(routes.songs);
-    const {user} = useContext(UserContext);
     const navigate = useNavigate();
 
 
     useEffect(() => {
         const fetchAlbums = async () => {
             try {
-
-                const response = await axios.get(
+                const response = await APIClientSecure.get(
                     config.api.playlist.list
                 );
                 const data = await response.data;
                 setPlaylists(data);
             } catch (e) {
-                if (e.response && e.response === 401) {
-                    navigate("sign/in");
-                }
+                navigate("/sign/in/");
             }
 
         }
-        user && fetchAlbums();
-    }, [user]);
+        fetchAlbums();
+    }, []);
 
 
     return (
@@ -47,7 +43,7 @@ export const HomeView = () => {
                 <div style={{flex: 3, display: "flex", flexFlow: "column", gap: 10}}>
                     <div className="contentTile">
                         <div className="buttonLink" style={{marginBottom: "1rem", padding: 6}}
-                             onClick={() => setCurrentView(routes.songs)}>
+                             onClick={() => navigate("/")}>
                             <HomeOutlined style={{fontSize: 30}}/> Home
                         </div>
                         <div className="buttonLink" style={{padding: 6}}>
@@ -65,7 +61,7 @@ export const HomeView = () => {
                                      marginBottom: 10
                                  }}
                                  onClick={() => {
-                                     setCurrentView(routes.playlist(playlist.id));
+                                     console.log(routes.playlist(playlist.id));
                                  }}>
                                 <div style={{
                                     display: "flex",
@@ -90,7 +86,7 @@ export const HomeView = () => {
                         overflowY: "scroll",
                         maxHeight: "100%",
                     }}>
-                    {currentView}
+                    <SongList/>
                 </div>
                 <div className="contentTile" style={{flex: 3}}>
 

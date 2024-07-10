@@ -2,13 +2,11 @@ import {useContext, useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {LibraryMusic} from "@mui/icons-material";
-import {UserContext} from "../contexts/userContext";
 import axios from "axios";
 
 export const PlaylistView = ({id}) => {
     const [songs, setSongs] = useState([]);
     const [playlist, setPlaylist] = useState(null);
-    const {user} = useContext(UserContext);
 
 
     useEffect(() => {

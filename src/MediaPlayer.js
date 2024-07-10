@@ -1,5 +1,5 @@
 import {useContext, useEffect, useRef, useState} from "react";
-import {SongContext} from "./contexts/songContext";
+import {SongContext} from "./context/songContext";
 import {SongCover} from "./components/SongCover";
 import {config} from "./config";
 import {
@@ -24,16 +24,16 @@ const ControlButton = ({audioTagRef}) => {
 
     useEffect(() => {
         if (!sound) {
-            audioTagRef.current.pause();
+            audioTagRef?.current?.pause();
         } else {
-            audioTagRef.current.play();
+            audioTagRef?.current?.play();
         }
-        audioTagRef.current.addEventListener("pause", pause);
-        audioTagRef.current.addEventListener("play", play);
+        audioTagRef?.current?.addEventListener("pause", pause);
+        audioTagRef?.current?.addEventListener("play", play);
 
         return () => {
-            audioTagRef.current.removeEventListener("pause", pause);
-            audioTagRef.current.removeEventListener("play", play);
+            audioTagRef?.current?.removeEventListener("pause", pause);
+            audioTagRef?.current?.removeEventListener("play", play);
         };
     }, [sound]);
 
