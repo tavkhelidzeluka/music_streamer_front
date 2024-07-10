@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {routes} from "../routes";
-import {useNavigate} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 import {config} from "../config";
 import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
@@ -11,7 +11,6 @@ import {APIClientSecure} from "../api";
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -60,7 +59,7 @@ export const HomeView = () => {
                                      marginBottom: 10
                                  }}
                                  onClick={() => {
-                                     console.log(routes.playlist(playlist.id));
+                                     navigate(`/playlist/${playlist.id}`);
                                  }}>
                                 <div style={{
                                     display: "flex",
@@ -85,7 +84,7 @@ export const HomeView = () => {
                         overflowY: "scroll",
                         maxHeight: "100%",
                     }}>
-                    <SongList/>
+                    <Outlet/>
                 </div>
                 <div className="contentTile" style={{flex: 3}}>
 

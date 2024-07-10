@@ -9,6 +9,7 @@ import {config} from "../config";
 import {AuthProvider} from "../context/AuthProvider";
 import axios from "axios";
 import {Checkbox, createTheme, Popover, Typography} from "@mui/material";
+import {Link} from "react-router-dom";
 
 const SongManageButton = ({playlist}) => {
     const [anchorElem, setAnchorElem] = useState(null);
@@ -93,8 +94,9 @@ export const SongCard = ({song, album, number}) => {
             <SongCover song={song} album={album_}/>
             {(album_) && (
                 <div style={{flex: 1}}>
-                    <span className="link"
-                          onMouseDownCapture={() => setCurrentView(routes.album(album_.id))}>{album_.title}</span>
+                    <Link to={`/album/${album_.id}/`} className="link">
+                        {album_.title}
+                    </Link>
                 </div>
             )}
             <div style={{flex: 0.2}}>

@@ -1,13 +1,11 @@
 import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
-import usePrivateAPIClient from "../hooks/usePrivateClient";
 import {useNavigate} from "react-router-dom";
-import {APIClient, APIClientSecure} from "../api";
+import {APIClientSecure} from "../api";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
-    const APIClientPrivate = usePrivateAPIClient();
     const navigate = useNavigate();
 
     useEffect(() => {

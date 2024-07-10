@@ -1,16 +1,18 @@
 import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
-import axios from "axios";
+import {APIClientSecure} from "../api";
+import {useParams} from "react-router-dom";
 
-export const AlbumView = ({id}) => {
+export const AlbumView = () => {
+    const {id} = useParams();
     const [songs, setSongs] = useState([]);
     const [album, setAlbum] = useState(null);
 
 
     useEffect(() => {
         const fetchAlbum = async () => {
-            const response = await axios.get(config.api.album.detail(id));
+            const response = await APIClientSecure.get(config.api.album.detail(id));
             const data = await response.data;
             setSongs(data.song_set);
             setAlbum(data);

@@ -7,6 +7,9 @@ import {routes} from "./routes";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import RequireAuth from "./routePermissions/RequireAuth";
 import {HomeView, SignInView} from "./views";
+import {AlbumView} from "./views/AlbumView";
+import {SongList} from "./views/SongList";
+import {PlaylistView} from "./views/PlaylistView";
 
 const SignOutView = () => {
     const navigate = useNavigate();
@@ -36,7 +39,12 @@ function App() {
             <SongContext.Provider value={{currentSong, setCurrentSong, sound, setSound}}>
                 <Routes>
                     <Route element={<RequireAuth/>}>
-                        <Route path="/" element={<HomeView/>}/>
+                        <Route element={<HomeView/>}>
+                            <Route path="/" element={<SongList/>}/>
+                            <Route path="/album/:id/" Component={AlbumView}/>
+                            <Route path="/playlist/:id/" Component={PlaylistView}/>
+
+                        </Route>
                     </Route>
                     <Route path="/sign/in/" element={<SignInView/>}/>
                     <Route path="/sign/out/" element={<SignOutView/>}/>

@@ -2,21 +2,28 @@ import {useContext, useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {LibraryMusic} from "@mui/icons-material";
-import axios from "axios";
+import {useNavigate, useParams} from "react-router-dom";
+import {APIClientSecure} from "../api";
 
-export const PlaylistView = ({id}) => {
+export const PlaylistView = () => {
+    const {id} = useParams();
     const [songs, setSongs] = useState([]);
     const [playlist, setPlaylist] = useState(null);
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlaylist = async () => {
-            const response = await axios.get(
-                config.api.playlist.detail(id),
-            );
-            const data = await response.data;
-            setSongs(data.songs);
-            setPlaylist(data);
+            try {
+                const response = await APIClientSecure.get(
+                    config.api.playlist.detail(id),
+                );
+                const data = await response.data;
+                setSongs(data.songs);
+                setPlaylist(data);
+            } catch (e) {
+                navigate("/sign/in/");
+            }
+
         }
         fetchPlaylist();
     }, [id]);
