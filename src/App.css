@@ -70,6 +70,7 @@ body {
     cursor: pointer;
     color: white;
     border-radius: 6px;
+    overflow: hidden;
 }
 
 .albumCard:hover {
