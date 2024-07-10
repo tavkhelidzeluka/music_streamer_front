@@ -4,9 +4,8 @@ import {useNavigate} from "react-router-dom";
 import {config} from "../config";
 import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
-import usePrivateAPIClient from "../hooks/usePrivateClient";
 import {SongList} from "./SongList";
-import {APIClient, APIClientSecure} from "../api";
+import {APIClientSecure} from "../api";
 
 
 export const HomeView = () => {

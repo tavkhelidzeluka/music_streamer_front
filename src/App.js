@@ -35,10 +35,11 @@ function App() {
         <ViewContext.Provider value={{currentView, setCurrentView}}>
             <SongContext.Provider value={{currentSong, setCurrentSong, sound, setSound}}>
                 <Routes>
-                    <Route path="/sign/in" element={<SignInView/>}/>
                     <Route element={<RequireAuth/>}>
                         <Route path="/" element={<HomeView/>}/>
                     </Route>
+                    <Route path="/sign/in/" element={<SignInView/>}/>
+                    <Route path="/sign/out/" element={<SignOutView/>}/>
                 </Routes>
             </SongContext.Provider>
         </ViewContext.Provider>
