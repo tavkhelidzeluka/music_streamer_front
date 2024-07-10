@@ -1,10 +1,8 @@
 import {useEffect, useState} from "react";
-import {routes} from "../routes";
 import {Outlet, useNavigate} from "react-router-dom";
 import {config} from "../config";
 import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
-import {SongList} from "./SongList";
 import {APIClientSecure} from "../api";
 
 
@@ -44,7 +42,8 @@ export const HomeView = () => {
                              onClick={() => navigate("/")}>
                             <HomeOutlined style={{fontSize: 30}}/> Home
                         </div>
-                        <div className="buttonLink" style={{padding: 6}}>
+                        <div className="buttonLink" style={{padding: 6}}
+                            onClick={() => navigate("/search/")}>
                             <Search style={{fontSize: 30}}/> Search
                         </div>
                     </div>

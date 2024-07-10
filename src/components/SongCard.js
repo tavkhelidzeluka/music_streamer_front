@@ -10,6 +10,7 @@ import {AuthProvider} from "../context/AuthProvider";
 import axios from "axios";
 import {Checkbox, createTheme, Popover, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
+import {APIClientSecure} from "../api";
 
 const SongManageButton = ({playlist}) => {
     const [anchorElem, setAnchorElem] = useState(null);
@@ -103,7 +104,7 @@ export const SongCard = ({song, album, number}) => {
                 {isHovered && (
                     <div style={{position: "relative"}}
                          onMouseDownCapture={async () => {
-                             const response = await axios.get(
+                             const response = await APIClientSecure.get(
                                  config.api.playlist.list,
                              )
 

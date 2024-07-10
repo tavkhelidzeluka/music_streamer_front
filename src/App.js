@@ -10,6 +10,7 @@ import {HomeView, SignInView} from "./views";
 import {AlbumView} from "./views/AlbumView";
 import {SongList} from "./views/SongList";
 import {PlaylistView} from "./views/PlaylistView";
+import SearchView from "./views/SearchView";
 
 const SignOutView = () => {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ function App() {
                             <Route path="/" element={<SongList/>}/>
                             <Route path="/album/:id/" Component={AlbumView}/>
                             <Route path="/playlist/:id/" Component={PlaylistView}/>
-
+                            <Route path="/search/" Component={SearchView}/>
                         </Route>
                     </Route>
                     <Route path="/sign/in/" element={<SignInView/>}/>
