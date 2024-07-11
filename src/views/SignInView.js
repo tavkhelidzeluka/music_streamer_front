@@ -1,46 +1,80 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {APIClient, APIClientSecure} from "../api";
+import {APIClientSecure} from "../api";
 import {config} from "../config";
 import useAuth from "../hooks/useAuth";
-import usePrivateAPIClient from "../hooks/usePrivateClient";
+import * as yup from 'yup';
 import {Box, Button, FormControl, TextField} from "@mui/material";
+import {useFormik} from "formik";
+
+const validationSchema = yup.object({
+    username: yup
+        .string('Enter your username')
+        .required('Name is required'),
+    password: yup
+        .string('Enter your password')
+        .required('Password is required'),
+});
+
+const AuthField = ({...props}) => {
+    return (
+        <TextField
+            fullWidth
+            variant="outlined"
+            sx={{
+                background: "#2a2a2a",
+                color: "#fff",
+                borderRadius: 1,
+                "& .MuiOutlinedInput-root": {
+                    '& .MuiInputBase-input': {
+                        color: 'white',
+                    },
+                },
+                '& .MuiInputLabel-root': {
+                    color: 'white'
+                }
+            }}
+            required
+            {...props}
+        />
+    );
+};
+
 
 export const SignInView = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const {setAuth} = useAuth();
 
     const navigate = useNavigate();
 
 
-    const submit = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        try {
-            const response = await APIClientSecure.post(
-                config.api.auth.token,
-                {
-                    username, password
-                },
-            );
+    const formik = useFormik({
+        initialValues: {
+            username: '',
+            password: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values, {setFieldError, setSubmitting}) => {
+            const {username, password} = values;
+            try {
+                const response = await APIClientSecure.post(
+                    config.api.auth.token,
+                    {
+                        username, password
+                    },
+                );
 
-            const data = await response.data;
-            console.log(data);
-            setAuth({username});
-            navigate("/");
-        } catch (error) {
-            console.log(error);
-            switch (error?.response?.status) {
-                case 401:
-                    console.log("Unauthorized");
-                    break;
-                default:
-                    console.log("No server response");
-                    break;
+                const data = await response.data;
+                console.log(data);
+                setAuth({username});
+                navigate("/");
+            } catch (error) {
+                setFieldError("username", "Check Username");
+                setFieldError("password", "Check Password");
+            } finally {
+                setSubmitting(false);
             }
         }
-    };
+    });
 
     return (
         <Box
@@ -53,8 +87,7 @@ export const SignInView = () => {
         >
             <Box
                 component="form"
-                autocomplete="off"
-                noValidate
+                onSubmit={formik.handleSubmit}
                 sx={{
                     width: "30%",
                     position: "absolute",
@@ -75,49 +108,25 @@ export const SignInView = () => {
                 }}
             >
                 <FormControl>
-                    <TextField
-                        fullWidth
+                    <AuthField
                         label="Username"
-                        variant="outlined"
-                        sx={{
-                            background: "#2a2a2a",
-                            color: "#fff",
-                            borderRadius: 1,
-                            "& .MuiOutlinedInput-root": {
-                                '& .MuiInputBase-input': {
-                                    color: 'white',
-                                },
-                                '& .MuiInputBase-input::placeholder': {
-                                    color: '#f4f4f4'
-                                },
-                            }
-                        }}
-                        onChange={
-                            (event) => setUsername(event.target.value)
-                        }
-                        required
+                        name="username"
+                        value={formik.values.username}
+                        onChange={formik.handleChange}
+                        error={formik.touched.username && Boolean(formik.errors.username)}
+                        helperText={formik.touched.username && formik.errors.username}
+                        type="text"
                     />
                 </FormControl>
                 <FormControl>
-                    <TextField
+                    <AuthField
                         label="Password"
-                        onChange={
-                            (event) => setPassword(event.target.value)
-                        }
-                        sx={{
-                            background: "#2a2a2a",
-                            color: "#fff",
-                            borderRadius: 1,
-                            "& .MuiOutlinedInput-root": {
-                                '& .MuiInputBase-input': {
-                                    color: 'white',
-                                },
-                                '& .MuiInputBase-input::placeholder': {
-                                    color: '#757575'
-                                },
-                            }
-                        }}
-                        required
+                        type="password"
+                        name="password"
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        error={formik.touched.password && Boolean(formik.errors.password)}
+                        helperText={formik.touched.password && formik.errors.password}
                     />
                 </FormControl>
                 <FormControl>
@@ -126,7 +135,7 @@ export const SignInView = () => {
                             width: "100%",
                         }}
                         variant="contained"
-                        onClick={submit}
+                        type="submit"
                     >
                         Sign In
                     </Button>
@@ -135,8 +144,9 @@ export const SignInView = () => {
             </Box>
         </Box>
     );
-};
+}
+    ;
 
 
-export default SignInView
+    export default SignInView
 
