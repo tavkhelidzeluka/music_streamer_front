@@ -3,6 +3,7 @@ import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
+import {Box} from "@mui/material";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
@@ -47,7 +48,7 @@ export const SongList = () => {
                              style={{width: "50%"}}
                              className="albumCard"
                              onClick={() => navigate(`/album/${album.id}/`)}>
-                            <img src={album.cover} width={50} style={{ borderRadius: "6px", marginRight: "1rem"}}/>
+                            <img src={album.cover} width={50} style={{borderRadius: "6px", marginRight: "1rem"}}/>
                             {album.title}
                         </div>
                     )
@@ -55,12 +56,14 @@ export const SongList = () => {
 
             </div>
             <div>
-                <div style={{
-                    display: "flex",
-                    padding: 6,
-                    marginBottom: '1rem',
-                    borderBottom: "1px solid gray"
-                }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        padding: 1,
+                        marginBottom: '1rem',
+                        borderBottom: "1px solid gray"
+                    }}
+                >
                     <div
                         style={{
                             flex: 0.2,
@@ -86,7 +89,7 @@ export const SongList = () => {
                         }}>
 
                     </div>
-                </div>
+                </Box>
                 {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
             </div>
         </>

@@ -1,6 +1,5 @@
 import './App.css';
 import {useEffect, useState} from "react";
-import {config} from "./config";
 import {SongContext} from './context/songContext';
 import {ViewContext} from "./context/viewContext";
 import {routes} from "./routes";
