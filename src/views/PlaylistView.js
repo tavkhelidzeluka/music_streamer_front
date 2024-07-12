@@ -4,6 +4,7 @@ import {SongCard} from "../components/SongCard";
 import {LibraryMusic} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
+import {Box} from "@mui/material";
 
 export const PlaylistView = () => {
     const {id} = useParams();
@@ -28,7 +29,11 @@ export const PlaylistView = () => {
         fetchPlaylist();
     }, [id]);
     return (
-        <>
+        <Box
+            sx={{
+                padding: 2
+            }}
+        >
             <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -80,6 +85,6 @@ export const PlaylistView = () => {
                 </div>
             </div>
             {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
-        </>
+        </Box>
     );
 };

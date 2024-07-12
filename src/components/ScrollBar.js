@@ -94,7 +94,7 @@ export const ScrollBar = ({scrollableRef, offset = 64}) => {
                 }}
                 sx={{
                     position: "absolute",
-                    width: 16,
+                    width: 12,
                     right: 0,
                     top: scrollBarTop,
                     height: scrollBarHeight,

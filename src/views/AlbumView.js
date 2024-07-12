@@ -3,6 +3,7 @@ import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {APIClientSecure} from "../api";
 import {useParams} from "react-router-dom";
+import {Box} from "@mui/material";
 
 export const AlbumView = () => {
     const {id} = useParams();
@@ -20,7 +21,11 @@ export const AlbumView = () => {
         fetchAlbum();
     }, [id]);
     return (
-        <>
+        <Box
+            sx={{
+                padding: 2
+            }}
+        >
             <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -63,6 +68,6 @@ export const AlbumView = () => {
                 </div>
             </div>
             {songs.map((song, i) => <SongCard key={song.id} song={song} album={album} number={i + 1}/>)}
-        </>
+        </Box>
     );
 };

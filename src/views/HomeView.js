@@ -1,17 +1,16 @@
 import {useEffect, useRef, useState} from "react";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {config} from "../config";
-import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
+import {Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
-import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import ScrollBar from "../components/ScrollBar";
 
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
+    const location = useLocation();
     const navigate = useNavigate();
-    const scrollableRef = useRef();
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -26,6 +25,7 @@ export const HomeView = () => {
             }
 
         }
+        console.log(location);
         fetchAlbums();
     }, []);
 
@@ -41,13 +41,28 @@ export const HomeView = () => {
             }}>
                 <div style={{flex: 3, display: "flex", flexFlow: "column", gap: 10}}>
                     <div className="contentTile">
-                        <div className="buttonLink" style={{marginBottom: "1rem", padding: 6}}
-                             onClick={() => navigate("/")}>
-                            <HomeOutlined style={{fontSize: 30}}/> Home
+                        <div
+                            className="buttonLink"
+                            style={{
+                                marginBottom: "1rem",
+                                padding: 6,
+                                color: location.pathname === "/" ? "white" : "#a7a7a3"
+                            }}
+                            onClick={() => navigate("/")}>
+                            {location.pathname === "/"
+                                ? (
+                                    <Home sx={{fontSize: 30}}/>
+                                ) : (
+                                    <HomeOutlined sx={{fontSize: 30}}/>
+                                )
+                            } Home
                         </div>
-                        <div className="buttonLink" style={{padding: 6}}
-                             onClick={() => navigate("/search/")}>
-                            <Search style={{fontSize: 30}}/> Search
+                        <div
+                            className="buttonLink"
+                            style={{padding: 6, color: location.pathname === "/search/" ? "white" : "#a7a7a3"}}
+                            onClick={() => navigate("/search/")}
+                        >
+                            <Search sx={{fontSize: 30}}/> Search
                         </div>
                     </div>
                     <div className="contentTile" style={{flex: "1 1 auto"}}>
@@ -79,50 +94,17 @@ export const HomeView = () => {
                         ))}
                     </div>
                 </div>
-                <div
+                <Box
                     className="contentTile"
-                    style={{
-                        position: "relative",
-                        background: "linear-gradient(180deg, #1e3264 0, #121212 40%)",
+                    sx={{
                         flex: 6,
                         overflowY: "hidden",
-                        padding: 0,
                         maxHeight: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                    }}>
-                    <Box
-                        sx={{
-                            position: "sticky",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: 64,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            padding: "0 1rem",
-                            background: "#121212",
-                            boxSizing: "border-box",
-                        }}
-                    >
-                        <AvatarWithUserControls/>
-                    </Box>
-                    <Box
-                        ref={scrollableRef}
-                        sx={{
-                            flex: 1,
-                            overflowY: "scroll",
-                            height: "100%",
-                            padding: "2rem",
-                        }}
-                    >
-                        <Outlet/>
-                    </Box>
-                    <ScrollBar
-                        scrollableRef={scrollableRef}
-                    />
-                </div>
+                        padding: 0
+                    }}
+                >
+                    <Outlet/>
+                </Box>
                 <div className="contentTile" style={{flex: 3}}>
 
                 </div>
