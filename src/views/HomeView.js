@@ -1,108 +1,17 @@
-import {useEffect, useState} from "react";
-import {Link, Outlet, useNavigate} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
+import {Outlet, useNavigate} from "react-router-dom";
 import {config} from "../config";
 import {HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
-import {
-    Avatar,
-    Box,
-    Button,
-    IconButton,
-    ListItemText,
-    MenuItem,
-    MenuList,
-    Popover,
-    Tooltip,
-    Typography
-} from "@mui/material";
-import useAuth from "../hooks/useAuth";
-
-
-const AvatarWithUserControls = () => {
-    const {auth} = useAuth();
-    const navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = useState(null);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const open = Boolean(anchorEl);
-    const id = open ? 'avatar-popover' : undefined;
-
-    return (
-        <>
-            <Tooltip title={auth.username}>
-                <IconButton
-                    onClick={handleClick}
-                    size="small"
-                    sx={{ml: 2}}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                >
-                    <Avatar
-                        alt={auth.username}
-                        sx={{width: 24, height: 24}}
-                    />
-                </IconButton>
-            </Tooltip>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                sx={{
-                    '& .MuiPaper-root': {
-                        marginTop: "1rem",
-                        backgroundColor: '#282828',
-                        color: 'white',
-                    },
-                }}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <Box>
-                    <MenuList
-                        sx={{
-                            p: 0.5,
-                            width: 200,
-                        }}
-                    >
-                        <MenuItem
-                            sx={{
-                                "&:hover": {
-                                    backgroundColor: '#3e3e3e',
-                                }
-                            }}
-                        >
-                            <ListItemText
-                                onClick={() => navigate("/sign/out/")}
-                            >
-                                Sign Out
-                            </ListItemText>
-                        </MenuItem>
-                    </MenuList>
-                </Box>
-            </Popover>
-        </>
-    )
-}
+import {Box,} from "@mui/material";
+import AvatarWithUserControls from "../components/AvatarWithUserControls";
+import ScrollBar from "../components/ScrollBar";
 
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
     const navigate = useNavigate();
+    const scrollableRef = useRef();
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -176,9 +85,11 @@ export const HomeView = () => {
                         position: "relative",
                         background: "linear-gradient(180deg, #1e3264 0, #121212 40%)",
                         flex: 6,
-                        overflowY: "scroll",
+                        overflowY: "hidden",
                         padding: 0,
                         maxHeight: "100%",
+                        display: "flex",
+                        flexDirection: "column",
                     }}>
                     <Box
                         sx={{
@@ -198,12 +109,19 @@ export const HomeView = () => {
                         <AvatarWithUserControls/>
                     </Box>
                     <Box
+                        ref={scrollableRef}
                         sx={{
+                            flex: 1,
+                            overflowY: "scroll",
+                            height: "100%",
                             padding: "2rem",
                         }}
                     >
                         <Outlet/>
                     </Box>
+                    <ScrollBar
+                        scrollableRef={scrollableRef}
+                    />
                 </div>
                 <div className="contentTile" style={{flex: 3}}>
 
