@@ -6,6 +6,8 @@ import {APIClientSecure} from "../api";
 import {config} from "../config";
 import {useNavigate} from "react-router-dom";
 import {SongCard} from "../components/SongCard";
+import SongListTable from "./SongListTable";
+import ScrollBar from "../components/ScrollBar";
 
 const SearchView = () => {
     const [search, setSearch] = useState("");
@@ -31,7 +33,16 @@ const SearchView = () => {
     }, [search]);
 
     return (
-        <Box>
+        <Box
+            sx={{
+                position: "relative",
+                padding: 0,
+                overflowY: "hidden",
+                maxHeight: "100%",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
             <Grid2
                 container
                 sx={{
@@ -77,61 +88,22 @@ const SearchView = () => {
                     <AvatarWithUserControls/>
 
                 </Grid2>
-
-
             </Grid2>
             <Box
+                ref={scrollableRef}
                 sx={{
-                    padding: 2
+                    overflowY: "scroll",
+                    padding: 2,
                 }}
             >
-                <div>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            padding: 1,
-                            marginBottom: '1rem',
-                            borderBottom: "1px solid gray"
-                        }}
-                    >
-                        <div
-                            style={{
-                                flex: 0.2,
-                                textAlign: "center"
-                            }}>
-                            #
-                        </div>
-                        <div
-                            style={{
-                                flex: 3,
-                            }}>
-                            Song
-                        </div>
-                        <div
-                            style={{
-                                flex: 1,
-                            }}>
-                            Album
-                        </div>
-                        <div
-                            style={{
-                                flex: 0.2,
-                            }}>
-
-                        </div>
-                    </Box>
-                    {
-                        songs.length > 0 ? (
-                            songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)
-                        ) : (
-                            <Typography>
-                                No Matching Results ...
-                            </Typography>
-                        )
-
-                    }
-                </div>
+                <SongListTable
+                    songs={songs}
+                />
             </Box>
+            <ScrollBar
+                scrollableRef={scrollableRef}
+                offset={64}
+            />
         </Box>
     )
 };

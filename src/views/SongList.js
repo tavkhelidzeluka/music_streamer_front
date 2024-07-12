@@ -6,6 +6,7 @@ import {APIClientSecure} from "../api";
 import {Box} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import ScrollBar from "../components/ScrollBar";
+import SongListTable from "./SongListTable";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
@@ -94,43 +95,9 @@ export const SongList = () => {
                     })}
 
                 </div>
-                <div>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            padding: 1,
-                            marginBottom: '1rem',
-                            borderBottom: "1px solid gray"
-                        }}
-                    >
-                        <div
-                            style={{
-                                flex: 0.2,
-                                textAlign: "center"
-                            }}>
-                            #
-                        </div>
-                        <div
-                            style={{
-                                flex: 3,
-                            }}>
-                            Song
-                        </div>
-                        <div
-                            style={{
-                                flex: 1,
-                            }}>
-                            Album
-                        </div>
-                        <div
-                            style={{
-                                flex: 0.2,
-                            }}>
-
-                        </div>
-                    </Box>
-                    {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
-                </div>
+                <SongListTable
+                    songs={songs}
+                />
             </Box>
             <ScrollBar
                 scrollableRef={scrollableRef}
