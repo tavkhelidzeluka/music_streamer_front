@@ -5,7 +5,6 @@ import {Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
-import ScrollBar from "../components/ScrollBar";
 
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -25,7 +24,6 @@ export const HomeView = () => {
             }
 
         }
-        console.log(location);
         fetchAlbums();
     }, []);
 

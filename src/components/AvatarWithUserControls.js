@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {Avatar, Box, IconButton, ListItemText, MenuItem, MenuList, Popover, Tooltip} from "@mui/material";
 
-export const AvatarWithUserControls = () => {
+export const AvatarWithUserControls = ({size = 24}) => {
     const {auth} = useAuth();
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -32,7 +32,7 @@ export const AvatarWithUserControls = () => {
                 >
                     <Avatar
                         alt={auth.username}
-                        sx={{width: 24, height: 24}}
+                        sx={{width: size, height: size}}
                     />
                 </IconButton>
             </Tooltip>
