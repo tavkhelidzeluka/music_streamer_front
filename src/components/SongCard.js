@@ -26,20 +26,37 @@ const SongManageButton = ({playlist}) => {
 
     return (
         <div>
-            <Typography
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
                 aria-owns={open ? 'mouse-over-popover' : undefined}
                 aria-haspopup="true"
                 onClick={(event) => open ? handleClose() : handleOpen(event)}
             >
                 <AddCircleOutline/>
-            </Typography>
+            </div>
             <Popover
                 open={open}
                 anchorEl={anchorElem}
                 onClose={handleClose}
                 disableRestoreFocus
                 sx={{
-                    borderRadius: 6
+                    '& .MuiPaper-root': {
+                        marginTop: "1rem",
+                        backgroundColor: '#282828',
+                        color: 'white',
+                    },
+                }}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}
             >
                 <div className="addToPlaylistPopUp">
@@ -102,7 +119,7 @@ export const SongCard = ({song, album, number}) => {
             )}
             <div style={{flex: 0.2}}>
                 {isHovered && (
-                    <div style={{position: "relative"}}
+                    <div
                          onMouseDownCapture={async () => {
                              const response = await APIClientSecure.get(
                                  config.api.playlist.list,

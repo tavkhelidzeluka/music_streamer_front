@@ -4,6 +4,7 @@ html, body, div#root {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
+    scrollbar-width: none;
 }
 
 body {
@@ -15,24 +16,7 @@ body {
 
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    transition: 0.3s ease;
-    background: #555;
-    border-radius: 6px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    width: 0;
 }
 
 
@@ -196,7 +180,6 @@ body {
 .addToPlaylistPopUp {
     width: 250px;
     height: 500px;
-    background: #121212;
     /*border-radius: 6px;*/
     display: flex;
     justify-content: center;
