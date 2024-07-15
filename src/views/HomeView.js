@@ -5,20 +5,24 @@ import {Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
+import Loading from "../components/Loading";
 
 export const HomeView = () => {
     const [playlists, setPlaylists] = useState([]);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAlbums = async () => {
+            setLoading(true);
             try {
                 const response = await APIClientSecure.get(
                     config.api.playlist.list
                 );
                 const data = await response.data;
                 setPlaylists(data);
+                setLoading(false);
             } catch (e) {
                 navigate("/sign/in/");
             }
@@ -101,7 +105,12 @@ export const HomeView = () => {
                         padding: 0
                     }}
                 >
-                    <Outlet/>
+                    {loading ? (
+                        <Loading/>
+                    ) : (
+                        <Outlet/>
+                    )}
+
                 </Box>
                 <div className="contentTile" style={{flex: 3}}>
 

@@ -5,25 +5,27 @@ import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import {APIClientSecure} from "../api";
 import {config} from "../config";
 import {useNavigate} from "react-router-dom";
-import {SongCard} from "../components/SongCard";
 import SongListTable from "./SongListTable";
 import ScrollBar from "../components/ScrollBar";
+import Loading from "../components/Loading";
 
 const SearchView = () => {
     const [search, setSearch] = useState("");
     const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const scrollableRef = useRef();
 
 
     useEffect(() => {
         const searchSongs = async () => {
-            console.log(search);
+            setLoading(true);
             try {
                 const response = await APIClientSecure.get(
                     `${config.api.songs}?search=${search}`
                 )
                 setSongs(response.data);
+                setLoading(false);
             } catch (e) {
                 navigate("/");
             }
@@ -92,13 +94,19 @@ const SearchView = () => {
             <Box
                 ref={scrollableRef}
                 sx={{
+                    marginTop: "64px",
                     overflowY: "scroll",
                     padding: 2,
                 }}
             >
-                <SongListTable
-                    songs={songs}
-                />
+                {loading ? (
+                    <Loading/>
+                ) : (
+                    <SongListTable
+                        songs={songs}
+                    />
+                )}
+
             </Box>
             <ScrollBar
                 scrollableRef={scrollableRef}
