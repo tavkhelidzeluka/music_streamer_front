@@ -14,6 +14,7 @@ import {APIClientSecure} from "../api";
 
 const SongManageButton = ({playlist}) => {
     const [anchorElem, setAnchorElem] = useState(null);
+    const [hovered, setHovered] = useState(false);
     const open = Boolean(anchorElem);
 
     const handleOpen = (event) => {
@@ -35,8 +36,15 @@ const SongManageButton = ({playlist}) => {
                 aria-owns={open ? 'mouse-over-popover' : undefined}
                 aria-haspopup="true"
                 onClick={(event) => open ? handleClose() : handleOpen(event)}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
-                <AddCircleOutline/>
+                <AddCircleOutline
+                    sx={{
+                        color: hovered ? "white" : "gray",
+                        transform: hovered ? "scale(1.05)" : "none",
+                    }}
+                />
             </div>
             <Popover
                 open={open}
@@ -120,14 +128,14 @@ export const SongCard = ({song, album, number}) => {
             <div style={{flex: 0.2}}>
                 {isHovered && (
                     <div
-                         onMouseDownCapture={async () => {
-                             const response = await APIClientSecure.get(
-                                 config.api.playlist.list,
-                             )
+                        onMouseDownCapture={async () => {
+                            const response = await APIClientSecure.get(
+                                config.api.playlist.list,
+                            )
 
-                             const data = await response.data;
-                             setAddToPlaylist(data);
-                         }}>
+                            const data = await response.data;
+                            setAddToPlaylist(data);
+                        }}>
                         <SongManageButton playlist={addToPlaylist}/>
                     </div>
                 )}
