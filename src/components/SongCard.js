@@ -1,29 +1,80 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
 import {Add, AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
 import {config} from "../config";
-import {Box, Checkbox, Popover} from "@mui/material";
+import {Box, Button, Checkbox, FormControlLabel, Popover} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import usePlaylists from "../hooks/usePlaylists";
 
-const SongManageButton = ({id, playlist}) => {
+const SongManageButton = ({id}) => {
     const [anchorElem, setAnchorElem] = useState(null);
     const [hovered, setHovered] = useState(false);
+    const [playlists, setPlaylist] = useState([]);
     const open = Boolean(anchorElem);
     const {setPlaylists} = usePlaylists();
     const navigate = useNavigate();
+    const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+    const [changedPlaylists, setChangedPlaylists] = useState([]);
 
+    useEffect(() => {
+        const fetchPlaylist = async () => {
+            const response = await APIClientSecure.get(
+                config.api.playlist.list,
+            );
+
+            const data = await response.data;
+            setPlaylist(data);
+
+        };
+        fetchPlaylist();
+    }, []);
+
+    useEffect(() => {
+        playlists.forEach(playlist => {
+            const isInPlaylist = playlist.songs.filter(song => song.id === id).length !== 0;
+            if (isInPlaylist) {
+                setSelectedPlaylists((prev) => [...prev, playlist.id]);
+            }
+        })
+    }, [playlists]);
 
     const handleOpen = (event) => {
-        setAnchorElem(event.target)
+        setAnchorElem(event.target);
     };
 
     const handleClose = () => {
-        setAnchorElem(null)
+        setAnchorElem(null);
+    };
+
+    const selectPlaylist = (playlist) => {
+        const playlistIndex = selectedPlaylists.indexOf(playlist.id);
+        if (playlistIndex === -1) {
+            setSelectedPlaylists(prev => [...prev, playlist.id]);
+        } else {
+            setSelectedPlaylists(prev => [
+                ...prev.slice(0, playlistIndex),
+                ...prev.slice(playlistIndex + 1)
+            ]);
+        }
+    };
+
+    const addSongs = async () => {
+        console.log(selectedPlaylists);
+        try {
+            await APIClientSecure.post(
+                config.api.playlist.updatePlaylists,
+                {
+                    ids: changedPlaylists,
+                    song: id,
+                }
+            );
+        } catch (e) {
+            console.log(e.response);
+        }
     };
 
     const createNewPlaylist = async () => {
@@ -51,7 +102,6 @@ const SongManageButton = ({id, playlist}) => {
                 }
             );
             const newPlaylist = response.data;
-            console.log(newPlaylist);
             response = await APIClientSecure.get(
                 config.api.playlist.list
             );
@@ -66,7 +116,9 @@ const SongManageButton = ({id, playlist}) => {
     };
 
     return (
-        <div>
+        <div
+            onDoubleClick={event => event.stopPropagation()}
+        >
             <div
                 style={{
                     display: "flex",
@@ -133,21 +185,54 @@ const SongManageButton = ({id, playlist}) => {
                             </Box>
                         </Grid>
                         <hr/>
-                        {playlist && (
-                            playlist.map(playlist => (
+                        {playlists && (
+                            playlists.map(playlist => (
                                 <Grid
-                                    className="albumCard"
                                     xs={12}
                                     key={playlist.id}
                                     sx={{
                                         padding: 1
                                     }}
                                 >
-                                    {playlist.name}
-                                    <Checkbox/>
+                                    <FormControlLabel
+                                        label={playlist.name}
+                                        control={
+                                            <Checkbox
+                                                checked={selectedPlaylists.indexOf(playlist.id) !== -1}
+                                                onChange={() => {
+                                                    selectPlaylist(playlist);
+                                                    if (changedPlaylists.indexOf(playlist.id) !== -1) {
+                                                        setChangedPlaylists(prev => [
+                                                            ...prev.slice(0, prev.indexOf(playlist.id)),
+                                                            ...prev.slice(prev.indexOf(playlist.id) + 1)
+                                                        ])
+                                                    } else {
+                                                        setChangedPlaylists(prev => [...prev, playlist.id]);
+                                                    }
+                                                }}
+                                            />
+                                        }
+                                    />
                                 </Grid>
                             ))
                         )}
+                        <Grid xs={12}>
+                            {changedPlaylists.length !== 0 && (
+                                <>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        sx={{marginRight: 1}}
+                                        onClick={() => setSelectedPlaylists([])}
+                                    >
+                                        Clear
+                                    </Button>
+                                    <Button variant="contained" onClick={addSongs}>
+                                        Done
+                                    </Button>
+                                </>
+                            )}
+                        </Grid>
                     </Grid>
                 </Box>
             </Popover>
@@ -160,7 +245,6 @@ export const SongCard = ({song, album, number}) => {
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
-    const [addToPlaylist, setAddToPlaylist] = useState([]);
 
     const playSong = () => {
         setCurrentSong({...song, album: album_});
@@ -208,16 +292,8 @@ export const SongCard = ({song, album, number}) => {
             )}
             <div style={{flex: 0.2}}>
                 {isHovered && (
-                    <div
-                        onMouseDownCapture={async () => {
-                            const response = await APIClientSecure.get(
-                                config.api.playlist.list,
-                            )
-
-                            const data = await response.data;
-                            setAddToPlaylist(data);
-                        }}>
-                        <SongManageButton id={song.id} playlist={addToPlaylist}/>
+                    <div>
+                        <SongManageButton id={song.id}/>
                     </div>
                 )}
             </div>

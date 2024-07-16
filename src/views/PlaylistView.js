@@ -11,7 +11,7 @@ export const PlaylistView = () => {
     const {id} = useParams();
     const [songs, setSongs] = useState([]);
     const [playlist, setPlaylist] = useState(null);
-    const {playlists, setPlaylists} = usePlaylists();
+    const {setPlaylists} = usePlaylists();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,8 +39,8 @@ export const PlaylistView = () => {
     const handleDelete = async () => {
 
         try {
-            let response = await APIClientSecure.delete(`${config.api.playlist.list}${playlist.id}`);
-            response = await APIClientSecure.get(
+            await APIClientSecure.delete(`${config.api.playlist.list}${playlist.id}`);
+            const response = await APIClientSecure.get(
                 config.api.playlist.list
             );
             const data = await response.data;
