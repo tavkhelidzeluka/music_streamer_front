@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {Box, TextField} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
@@ -6,8 +6,6 @@ import {APIClientSecure} from "../api";
 import {config} from "../config";
 import {useNavigate} from "react-router-dom";
 import SongListTable from "./SongListTable";
-import ScrollBar from "../components/ScrollBar";
-import Loading from "../components/Loading";
 import InfiniteScrollBox from "../components/InfiniteScrollBox";
 
 const SearchView = () => {
@@ -108,6 +106,7 @@ const SearchView = () => {
                 sx={{
                     marginTop: "64px",
                 }}
+                loading={loading}
                 onLoad={() => setPage(prev => prev + 1)}
             >
                 <SongListTable
