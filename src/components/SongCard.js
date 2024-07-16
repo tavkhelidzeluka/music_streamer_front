@@ -1,14 +1,12 @@
 import {useContext, useState} from "react";
 import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
-import {AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
+import {Add, AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
 import {ViewContext} from "../context/viewContext";
-import {routes} from "../routes";
 import {config} from "../config";
-import {AuthProvider} from "../context/AuthProvider";
-import axios from "axios";
-import {Checkbox, createTheme, Popover, Typography} from "@mui/material";
+import {Box, Checkbox, Popover} from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 import {Link} from "react-router-dom";
 import {APIClientSecure} from "../api";
 
@@ -67,16 +65,43 @@ const SongManageButton = ({playlist}) => {
                     horizontal: 'right',
                 }}
             >
-                <div className="addToPlaylistPopUp">
-                    {playlist && (
-                        playlist.map(playlist => (
-                            <div key={playlist.id}>
-                                {playlist.name}
-                                <Checkbox/>
-                            </div>
-                        ))
-                    )}
-                </div>
+                <Box
+                    sx={{
+                        padding: 2
+                    }}
+                    className="addToPlaylistPopUp"
+                >
+                    <Grid>
+                        <Grid
+                            className="albumCard"
+                            xs={12}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Add/>
+                                New Playlist
+                            </Box>
+                        </Grid>
+                        <hr/>
+                        {playlist && (
+                            playlist.map(playlist => (
+                                <Grid
+                                    className="albumCard"
+
+                                    xs={12}
+                                    key={playlist.id}
+                                >
+                                    {playlist.name}
+                                    <Checkbox/>
+                                </Grid>
+                            ))
+                        )}
+                    </Grid>
+                </Box>
             </Popover>
         </div>
     );

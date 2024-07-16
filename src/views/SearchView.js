@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from "react";
-import {Box, Input, TextField, Typography} from "@mui/material";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Box, TextField} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import {APIClientSecure} from "../api";
@@ -12,27 +12,60 @@ import Loading from "../components/Loading";
 const SearchView = () => {
     const [search, setSearch] = useState("");
     const [songs, setSongs] = useState([]);
+    const [page, setPage] = useState(1);
+
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const scrollableRef = useRef();
+    const loader = useRef();
+    const searchSongs = async (newSearch) => {
+        setLoading(true);
+        try {
+            const response = await APIClientSecure.get(
+                `${config.api.songs}?search=${search}&page=${page}`
+            )
+            const {results} = response.data;
 
-
-    useEffect(() => {
-        const searchSongs = async () => {
-            setLoading(true);
-            try {
-                const response = await APIClientSecure.get(
-                    `${config.api.songs}?search=${search}`
-                )
-                setSongs(response.data);
-                setLoading(false);
-            } catch (e) {
-                navigate("/");
+            setSongs(prev => [...prev, ...results]);
+            setLoading(false);
+        } catch (error) {
+            if (error?.response) {
+                if (error.response?.status === 401) {
+                    navigate("/sign/in/");
+                }
             }
         }
+    };
 
-        searchSongs();
-    }, [search]);
+    const handleSearch = (event) => {
+        setSearch(event.target.value);
+        setSongs([]);
+        setPage(1);
+    }
+
+    useEffect(() => {
+        searchSongs(true);
+    }, [search, page]);
+
+    const handleObserver = useCallback((entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !loading) {
+            setPage(prev => prev + 1);
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        const option = {
+            root: null,
+            rootMargin: '20px',
+            threshold: 0
+        };
+        const observer = new IntersectionObserver(handleObserver, option);
+        if (loader.current) observer.observe(loader.current);
+        return () => {
+            if (loader.current) observer.unobserve(loader.current);
+        };
+    }, [handleObserver]);
 
     return (
         <Box
@@ -60,7 +93,7 @@ const SearchView = () => {
                 <Grid2 xs={10}>
                     <TextField
                         value={search}
-                        onChange={(event) => setSearch(event.target.value)}
+                        onChange={handleSearch}
                         variant="outlined"
                         size="small"
                         placeholder="What do you want to play?"
@@ -94,19 +127,16 @@ const SearchView = () => {
             <Box
                 ref={scrollableRef}
                 sx={{
-                    marginTop: "64px",
                     overflowY: "scroll",
                     padding: 2,
+                    marginTop: "64px",
                 }}
             >
-                {loading ? (
-                    <Loading/>
-                ) : (
-                    <SongListTable
-                        songs={songs}
-                    />
-                )}
-
+                <SongListTable
+                    songs={songs}
+                />
+                {loading && <Loading/>}
+                <div ref={loader}/>
             </Box>
             <ScrollBar
                 scrollableRef={scrollableRef}

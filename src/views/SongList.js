@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {Link, useNavigate} from "react-router-dom";
@@ -7,39 +7,71 @@ import {Box} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import ScrollBar from "../components/ScrollBar";
 import SongListTable from "./SongListTable";
+import Loading from "../components/Loading";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const scrollableRef = useRef();
+    const loader = useRef();
 
 
-    useEffect(() => {
-        const fetchSongs = async () => {
-            try {
-                const response = await APIClientSecure.get(config.api.songs);
-                const data = await response.data;
-                setSongs(data);
-            } catch (error) {
-                navigate("/sign/in/");
-            }
-        };
-
-        const fetchAlbums = async () => {
-            try {
-                const response = await APIClientSecure.get(config.api.album.list);
-                const data = await response.data;
-                setAlbums(data);
-            } catch (error) {
-                navigate("/sign/in/");
+    const fetchSongs = async () => {
+        try {
+            console.debug(`Fetch Songs page: ${page}`);
+            setLoading(true);
+            const response = await APIClientSecure.get(`${config.api.songs}?page=${page}`);
+            const {results} = await response.data;
+            setSongs(prev => [...prev, ...results]);
+            setLoading(false);
+        } catch (error) {
+            if (error?.response) {
+                if (error.response?.status === 401) {
+                    navigate("/sign/in/");
+                }
             }
         }
+    };
+    const fetchAlbums = async () => {
+        try {
+            const response = await APIClientSecure.get(config.api.album.list);
+            const data = await response.data;
+            setAlbums(data);
+        } catch (error) {
+            navigate("/sign/in/");
+        }
+    }
 
-        fetchSongs();
+    useEffect(() => {
         fetchAlbums();
     }, []);
 
+    useEffect(() => {
+        fetchSongs();
+    }, [page]);
+
+    const handleObserver = useCallback((entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !loading) {
+            setPage(prev => prev + 1);
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        const option = {
+            root: null,
+            rootMargin: '20px',
+            threshold: 0
+        };
+        const observer = new IntersectionObserver(handleObserver, option);
+        if (loader.current) observer.observe(loader.current);
+        return () => {
+            if (loader.current) observer.unobserve(loader.current);
+        };
+    }, [handleObserver]);
     return (
         <Box
             sx={{
@@ -98,6 +130,8 @@ export const SongList = () => {
                 <SongListTable
                     songs={songs}
                 />
+                {loading && <Loading/>}
+                <div ref={loader}/>
             </Box>
             <ScrollBar
                 scrollableRef={scrollableRef}

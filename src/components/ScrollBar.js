@@ -14,7 +14,6 @@ export const ScrollBar = ({scrollableRef, offset = 64}) => {
 
     useEffect(() => {
         const scrollable = scrollableRef.current;
-        console.log(scrollableRef.current.scrollY);
         const handleScroll = () => {
             if (isDragging)
                 return;
