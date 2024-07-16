@@ -96,12 +96,24 @@ export const MediaPlayer = () => {
         const handleEnd = () => {
             playNextSong();
         }
+        const handleChange = (event) => {
+            if (event.key === "MediaTrackNext") {
+                console.log("Play next");
+                playNextSong();
+            } else if (event.key === "MediaTrackPrevious") {
+                console.log("play Prev")
+                playPrevSong();
+            }
+        };
+
+        document.addEventListener('keydown', handleChange);
         audioTagRef.current.addEventListener('ended', handleEnd);
 
         return () => {
             audioTagRef.current.removeEventListener('ended', handleEnd);
+            document.removeEventListener('keydown', handleChange);
         }
-    }, [audioTagRef, songQueue]);
+    }, [audioTagRef, songQueue, currentSong]);
 
 
     const updateSoundProgressBar = (ref) => {
