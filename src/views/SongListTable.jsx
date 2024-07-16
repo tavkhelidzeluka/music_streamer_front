@@ -1,7 +1,9 @@
 import {Box} from "@mui/material";
 import {SongCard} from "../components/SongCard";
+import useSongQueue from "../hooks/useSongQueue";
 
 export const SongListTable = ({songs}) => {
+    const {setSongQueue} = useSongQueue();
     return (
         <Box>
             <Box
@@ -38,7 +40,18 @@ export const SongListTable = ({songs}) => {
 
                 </div>
             </Box>
-            {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
+            {songs.map((song, i) => (
+                <SongCard
+                    key={song.id}
+                    song={song}
+                    number={i + 1}
+                    onPlay={() => {
+                        const newSongQueue = songs;
+                        console.log(newSongQueue);
+                        setSongQueue(newSongQueue);
+                    }}
+                />
+            ))}
         </Box>
     );
 };

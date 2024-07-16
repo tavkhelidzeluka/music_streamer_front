@@ -6,9 +6,11 @@ import {
     PauseOutlined,
     VolumeUpOutlined,
     VolumeDownOutlined,
-    VolumeOffOutlined, PlayArrow
+    VolumeOffOutlined, PlayArrow, SkipNext, SkipPrevious
 } from "@mui/icons-material";
 import {ProgressBarChangeable} from "./components/ProgressBarChangeable";
+import {APIClient} from "./api";
+import useSongQueue from "./hooks/useSongQueue";
 
 const convertToMinute = (time) => {
     const seconds = parseInt(time % 60);
@@ -83,10 +85,23 @@ const SoundControl = ({audioTagRef}) => {
 };
 export const MediaPlayer = () => {
     const audioTagRef = useRef();
-    const {currentSong} = useContext(SongContext);
+    const {currentSong, setCurrentSong} = useContext(SongContext);
+    const {songQueue} = useSongQueue();
     const [timeIndicator, setTimeIndicator] = useState(
         {current: convertToMinute(0), duration: convertToMinute(0)}
     );
+
+
+    useEffect(() => {
+        const handleEnd = () => {
+            playNextSong();
+        }
+        audioTagRef.current.addEventListener('ended', handleEnd);
+
+        return () => {
+            audioTagRef.current.removeEventListener('ended', handleEnd);
+        }
+    }, [audioTagRef, songQueue]);
 
 
     const updateSoundProgressBar = (ref) => {
@@ -94,8 +109,8 @@ export const MediaPlayer = () => {
             const audioTag = audioTagRef.current;
             if (!audioTag)
                 return
-
             ref.current.style.width = `${audioTag.currentTime / audioTag.duration * 100}%`;
+
             setTimeIndicator({
                 current: convertToMinute(audioTag.currentTime),
                 duration: convertToMinute(audioTag.duration),
@@ -105,6 +120,15 @@ export const MediaPlayer = () => {
         changeBar();
         return interval;
     };
+
+    const playNextSong = () => {
+        const nextSong = songQueue[songQueue.findIndex(song => song.id === currentSong.id) + 1];
+        nextSong !== undefined && setCurrentSong(nextSong);
+    }
+    const playPrevSong = () => {
+        const prevSong = songQueue[songQueue.findIndex(song => song.id === currentSong.id) - 1];
+        prevSong !== undefined && setCurrentSong(prevSong);
+    }
 
     return (
         <div className="mediaPlayer">
@@ -120,7 +144,9 @@ export const MediaPlayer = () => {
                     display: "flex",
                     justifyContent: "space-evenly"
                 }}>
+                    <SkipPrevious onClick={playPrevSong} sx={{cursor: "pointer"}}/>
                     <ControlButton audioTagRef={audioTagRef}/>
+                    <SkipNext onClick={playNextSong}  sx={{cursor: "pointer"}}/>
                 </div>
                 <div style={{
                     display: "flex",

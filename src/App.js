@@ -9,6 +9,7 @@ import {SongList} from "./views/SongList";
 import {PlaylistView} from "./views/PlaylistView";
 import SearchView from "./views/SearchView";
 import PlaylistProvider from "./context/PlaylistProvider";
+import SongQueueProvider from "./context/SongQueueProvider";
 
 const SignOutView = () => {
     const navigate = useNavigate();
@@ -33,22 +34,24 @@ function App() {
 
 
     return (
-        <PlaylistProvider>
-            <SongContext.Provider value={{currentSong, setCurrentSong, sound, setSound}}>
-                <Routes>
-                    <Route element={<RequireAuth/>}>
-                        <Route element={<HomeView/>}>
-                            <Route path="/" element={<SongList/>}/>
-                            <Route path="/album/:id/" Component={AlbumView}/>
-                            <Route path="/playlist/:id/" Component={PlaylistView}/>
-                            <Route path="/search/" Component={SearchView}/>
+        <SongQueueProvider>
+            <PlaylistProvider>
+                <SongContext.Provider value={{currentSong, setCurrentSong, sound, setSound}}>
+                    <Routes>
+                        <Route element={<RequireAuth/>}>
+                            <Route element={<HomeView/>}>
+                                <Route path="/" element={<SongList/>}/>
+                                <Route path="/album/:id/" Component={AlbumView}/>
+                                <Route path="/playlist/:id/" Component={PlaylistView}/>
+                                <Route path="/search/" Component={SearchView}/>
+                            </Route>
                         </Route>
-                    </Route>
-                    <Route path="/sign/in/" element={<SignInView/>}/>
-                    <Route path="/sign/out/" element={<SignOutView/>}/>
-                </Routes>
-            </SongContext.Provider>
-        </PlaylistProvider>
+                        <Route path="/sign/in/" element={<SignInView/>}/>
+                        <Route path="/sign/out/" element={<SignOutView/>}/>
+                    </Routes>
+                </SongContext.Provider>
+            </PlaylistProvider>
+        </SongQueueProvider>
     );
 }
 

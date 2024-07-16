@@ -6,6 +6,7 @@ import {Box} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import SongListTable from "./SongListTable";
 import InfiniteScrollBox from "../components/InfiniteScrollBox";
+import useSongQueue from "../hooks/useSongQueue";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
@@ -13,6 +14,7 @@ export const SongList = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const {songQueue, setSongQueue} = useSongQueue();
 
 
     const fetchSongs = async () => {
@@ -40,6 +42,11 @@ export const SongList = () => {
             navigate("/sign/in/");
         }
     }
+    useEffect(() => {
+        if (songQueue.length === 0) {
+            setSongQueue(songs);
+        }
+    }, [songs]);
 
     useEffect(() => {
         fetchAlbums();

@@ -9,6 +9,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import usePlaylists from "../hooks/usePlaylists";
+import useSongQueue from "../hooks/useSongQueue";
 
 const SongManageButton = ({id}) => {
     const [anchorElem, setAnchorElem] = useState(null);
@@ -249,12 +250,13 @@ const SongManageButton = ({id}) => {
 }
 
 
-export const SongCard = ({song, album, number}) => {
+export const SongCard = ({song, album, number, onPlay = () => {}}) => {
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
 
     const playSong = () => {
+        onPlay();
         setCurrentSong({...song, album: album_});
         setSound(true);
     }
