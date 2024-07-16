@@ -20,26 +20,31 @@ const SongManageButton = ({id}) => {
     const [selectedPlaylists, setSelectedPlaylists] = useState([]);
     const [changedPlaylists, setChangedPlaylists] = useState([]);
 
-    useEffect(() => {
-        const fetchPlaylist = async () => {
-            const response = await APIClientSecure.get(
-                config.api.playlist.list,
-            );
-
-            const data = await response.data;
-            setPlaylist(data);
-
-        };
-        fetchPlaylist();
-    }, []);
-
-    useEffect(() => {
+    const updateSelectedPlaylist = () => {
+        setSelectedPlaylists([]);
         playlists.forEach(playlist => {
             const isInPlaylist = playlist.songs.filter(song => song.id === id).length !== 0;
             if (isInPlaylist) {
                 setSelectedPlaylists((prev) => [...prev, playlist.id]);
             }
-        })
+        });
+    }
+    const fetchPlaylist = async () => {
+        const response = await APIClientSecure.get(
+            config.api.playlist.list,
+        );
+
+        const data = await response.data;
+        setPlaylist(data);
+        updateSelectedPlaylist();
+    };
+
+    useEffect(() => {
+        fetchPlaylist();
+    }, []);
+
+    useEffect(() => {
+        updateSelectedPlaylist();
     }, [playlists]);
 
     const handleOpen = (event) => {
@@ -50,7 +55,7 @@ const SongManageButton = ({id}) => {
         setAnchorElem(null);
     };
 
-    const selectPlaylist = (playlist) => {
+    const togglePlaylist = (playlist) => {
         const playlistIndex = selectedPlaylists.indexOf(playlist.id);
         if (playlistIndex === -1) {
             setSelectedPlaylists(prev => [...prev, playlist.id]);
@@ -200,7 +205,7 @@ const SongManageButton = ({id}) => {
                                             <Checkbox
                                                 checked={selectedPlaylists.indexOf(playlist.id) !== -1}
                                                 onChange={() => {
-                                                    selectPlaylist(playlist);
+                                                    togglePlaylist(playlist);
                                                     if (changedPlaylists.indexOf(playlist.id) !== -1) {
                                                         setChangedPlaylists(prev => [
                                                             ...prev.slice(0, prev.indexOf(playlist.id)),
@@ -223,7 +228,10 @@ const SongManageButton = ({id}) => {
                                         variant="contained"
                                         color="error"
                                         sx={{marginRight: 1}}
-                                        onClick={() => setSelectedPlaylists([])}
+                                        onClick={() => {
+                                            fetchPlaylist();
+                                            setChangedPlaylists([]);
+                                        }}
                                     >
                                         Clear
                                     </Button>
