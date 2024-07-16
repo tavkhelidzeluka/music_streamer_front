@@ -8,16 +8,15 @@ import {useNavigate} from "react-router-dom";
 import SongListTable from "./SongListTable";
 import ScrollBar from "../components/ScrollBar";
 import Loading from "../components/Loading";
+import InfiniteScrollBox from "../components/InfiniteScrollBox";
 
 const SearchView = () => {
     const [search, setSearch] = useState("");
     const [songs, setSongs] = useState([]);
     const [page, setPage] = useState(1);
-
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const scrollableRef = useRef();
-    const loader = useRef();
+
     const searchSongs = async (newSearch) => {
         setLoading(true);
         try {
@@ -47,25 +46,6 @@ const SearchView = () => {
         searchSongs(true);
     }, [search, page]);
 
-    const handleObserver = useCallback((entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && !loading) {
-            setPage(prev => prev + 1);
-        }
-    }, [loading]);
-
-    useEffect(() => {
-        const option = {
-            root: null,
-            rootMargin: '20px',
-            threshold: 0
-        };
-        const observer = new IntersectionObserver(handleObserver, option);
-        if (loader.current) observer.observe(loader.current);
-        return () => {
-            if (loader.current) observer.unobserve(loader.current);
-        };
-    }, [handleObserver]);
 
     return (
         <Box
@@ -124,24 +104,16 @@ const SearchView = () => {
 
                 </Grid2>
             </Grid2>
-            <Box
-                ref={scrollableRef}
+            <InfiniteScrollBox
                 sx={{
-                    overflowY: "scroll",
-                    padding: 2,
                     marginTop: "64px",
                 }}
+                onLoad={() => setPage(prev => prev + 1)}
             >
                 <SongListTable
                     songs={songs}
                 />
-                {loading && <Loading/>}
-                <div ref={loader}/>
-            </Box>
-            <ScrollBar
-                scrollableRef={scrollableRef}
-                offset={64}
-            />
+            </InfiniteScrollBox>
         </Box>
     )
 };

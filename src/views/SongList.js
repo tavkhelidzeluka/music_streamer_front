@@ -1,13 +1,11 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {config} from "../config";
-import {SongCard} from "../components/SongCard";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import {Box} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
-import ScrollBar from "../components/ScrollBar";
 import SongListTable from "./SongListTable";
-import Loading from "../components/Loading";
+import InfiniteScrollBox from "../components/InfiniteScrollBox";
 
 export const SongList = () => {
     const [songs, setSongs] = useState([]);
@@ -15,8 +13,6 @@ export const SongList = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const scrollableRef = useRef();
-    const loader = useRef();
 
 
     const fetchSongs = async () => {
@@ -53,25 +49,6 @@ export const SongList = () => {
         fetchSongs();
     }, [page]);
 
-    const handleObserver = useCallback((entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && !loading) {
-            setPage(prev => prev + 1);
-        }
-    }, [loading]);
-
-    useEffect(() => {
-        const option = {
-            root: null,
-            rootMargin: '20px',
-            threshold: 0
-        };
-        const observer = new IntersectionObserver(handleObserver, option);
-        if (loader.current) observer.observe(loader.current);
-        return () => {
-            if (loader.current) observer.unobserve(loader.current);
-        };
-    }, [handleObserver]);
     return (
         <Box
             sx={{
@@ -101,13 +78,12 @@ export const SongList = () => {
             >
                 <AvatarWithUserControls/>
             </Box>
-            <Box
-                ref={scrollableRef}
+            <InfiniteScrollBox
                 sx={{
-                    overflowY: "scroll",
-                    padding: 2,
-                    marginTop: "64px",
+                    marginTop: "64px"
                 }}
+                loading={loading}
+                onLoad={() => setPage((prev) => prev + 1)}
             >
                 <div style={{
                     display: "flex",
@@ -120,7 +96,8 @@ export const SongList = () => {
                                  style={{width: "50%"}}
                                  className="albumCard"
                                  onClick={() => navigate(`/album/${album.id}/`)}>
-                                <img src={album.cover} width={50} style={{borderRadius: "6px", marginRight: "1rem"}}/>
+                                <img src={album.cover} width={50}
+                                     style={{borderRadius: "6px", marginRight: "1rem"}}/>
                                 {album.title}
                             </div>
                         )
@@ -130,13 +107,9 @@ export const SongList = () => {
                 <SongListTable
                     songs={songs}
                 />
-                {loading && <Loading/>}
-                <div ref={loader}/>
-            </Box>
-            <ScrollBar
-                scrollableRef={scrollableRef}
-                offset={64}
-            />
+            </InfiniteScrollBox>
+
+
         </Box>
     );
 };

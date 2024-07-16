@@ -3,7 +3,6 @@ import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
 import {Add, AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
-import {ViewContext} from "../context/viewContext";
 import {config} from "../config";
 import {Box, Checkbox, Popover} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -109,7 +108,6 @@ const SongManageButton = ({playlist}) => {
 
 
 export const SongCard = ({song, album, number}) => {
-    const {setCurrentView} = useContext(ViewContext);
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
@@ -128,7 +126,16 @@ export const SongCard = ({song, album, number}) => {
         <div
             className="songCard"
             onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}>
+            onMouseLeave={() => setIsHovered(false)}
+            onDoubleClick={() => {
+                if (currentSong?.id === song?.id) {
+                    sound ? pauseSong() : playSong();
+                } else {
+                    playSong();
+                }
+
+            }}
+        >
             {number && (
                 <div style={{
                     flex: 0.2,
