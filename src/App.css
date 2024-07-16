@@ -198,3 +198,11 @@ body {
 .bg-transparent {
     background: transparent;
 }
+
+.controlButton {
+    color: gray;
+}
+
+.controlButton:hover {
+    color: white
+}

@@ -142,11 +142,21 @@ export const MediaPlayer = () => {
                 <div style={{
                     margin: '0 0 1rem',
                     display: "flex",
-                    justifyContent: "space-evenly"
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 20
                 }}>
-                    <SkipPrevious onClick={playPrevSong} sx={{cursor: "pointer"}}/>
+                    <SkipPrevious
+                        className="controlButton"
+                        onClick={playPrevSong}
+                        sx={{cursor: "pointer"}}
+                    />
                     <ControlButton audioTagRef={audioTagRef}/>
-                    <SkipNext onClick={playNextSong}  sx={{cursor: "pointer"}}/>
+                    <SkipNext
+                        className="controlButton"
+                        onClick={playNextSong}
+                        sx={{cursor: "pointer"}}
+                    />
                 </div>
                 <div style={{
                     display: "flex",
