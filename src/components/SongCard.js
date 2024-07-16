@@ -6,13 +6,17 @@ import {DancingBlocks} from "./DancingBlocks";
 import {config} from "../config";
 import {Box, Checkbox, Popover} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
+import usePlaylists from "../hooks/usePlaylists";
 
-const SongManageButton = ({playlist}) => {
+const SongManageButton = ({id, playlist}) => {
     const [anchorElem, setAnchorElem] = useState(null);
     const [hovered, setHovered] = useState(false);
     const open = Boolean(anchorElem);
+    const {setPlaylists} = usePlaylists();
+    const navigate = useNavigate();
+
 
     const handleOpen = (event) => {
         setAnchorElem(event.target)
@@ -20,7 +24,46 @@ const SongManageButton = ({playlist}) => {
 
     const handleClose = () => {
         setAnchorElem(null)
-    }
+    };
+
+    const createNewPlaylist = async () => {
+        try {
+            let response = await APIClientSecure.get(config.api.playlist.names);
+            const playlists = response.data;
+            let maxNum = 1;
+            playlists.forEach(playlist => {
+                let [, num] = playlist.name.split("#");
+                if (num === undefined) {
+                    return;
+                }
+                num = parseInt(num);
+
+                if (num > maxNum)
+                    maxNum = num
+            })
+            response = await APIClientSecure.post(
+                config.api.playlist.list,
+                {
+                    name: `My Playlist #${maxNum + 1}`,
+                    songs: [
+                        id
+                    ]
+                }
+            );
+            const newPlaylist = response.data;
+            console.log(newPlaylist);
+            response = await APIClientSecure.get(
+                config.api.playlist.list
+            );
+            const data = await response.data;
+            setPlaylists(data);
+            navigate(`/playlist/${newPlaylist.id}`)
+
+        } catch (e) {
+            console.log(e);
+        }
+        console.log("Create new playlist!");
+    };
 
     return (
         <div>
@@ -74,6 +117,10 @@ const SongManageButton = ({playlist}) => {
                         <Grid
                             className="albumCard"
                             xs={12}
+                            sx={{
+                                padding: 1
+                            }}
+                            onClick={createNewPlaylist}
                         >
                             <Box
                                 sx={{
@@ -90,9 +137,11 @@ const SongManageButton = ({playlist}) => {
                             playlist.map(playlist => (
                                 <Grid
                                     className="albumCard"
-
                                     xs={12}
                                     key={playlist.id}
+                                    sx={{
+                                        padding: 1
+                                    }}
                                 >
                                     {playlist.name}
                                     <Checkbox/>
@@ -168,7 +217,7 @@ export const SongCard = ({song, album, number}) => {
                             const data = await response.data;
                             setAddToPlaylist(data);
                         }}>
-                        <SongManageButton playlist={addToPlaylist}/>
+                        <SongManageButton id={song.id} playlist={addToPlaylist}/>
                     </div>
                 )}
             </div>

@@ -6,9 +6,11 @@ import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
 import Loading from "../components/Loading";
+import usePlaylists from "../hooks/usePlaylists";
 
 export const HomeView = () => {
-    const [playlists, setPlaylists] = useState([]);
+    const {playlists, setPlaylists} = usePlaylists();
+
     const [loading, setLoading] = useState(true);
     const location = useLocation();
     const navigate = useNavigate();
@@ -26,7 +28,6 @@ export const HomeView = () => {
             } catch (e) {
                 navigate("/sign/in/");
             }
-
         }
         fetchAlbums();
     }, []);

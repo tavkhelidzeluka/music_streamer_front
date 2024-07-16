@@ -9,6 +9,7 @@ export const config = {
         },
         playlist: {
             list: `${API_BASE_URL}/playlists/`,
+            names: `${API_BASE_URL}/playlists/names/`,
             detail: (id) => `${API_BASE_URL}/playlists/${id}/`,
             addSong: (id) => `${API_BASE_URL}/playlists/${id}/add_song/`,
         },

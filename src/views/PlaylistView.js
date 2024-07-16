@@ -1,15 +1,17 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
 import {LibraryMusic} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
+import usePlaylists from "../hooks/usePlaylists";
 
 export const PlaylistView = () => {
     const {id} = useParams();
     const [songs, setSongs] = useState([]);
     const [playlist, setPlaylist] = useState(null);
+    const {playlists, setPlaylists} = usePlaylists();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,18 +24,45 @@ export const PlaylistView = () => {
                 setSongs(data.songs);
                 setPlaylist(data);
             } catch (e) {
-                navigate("/sign/in/");
+                if (e?.response) {
+                    if (e.response?.status === 401) {
+                        navigate("/sign/in/");
+                    } else {
+                        navigate("/");
+                    }
+                }
             }
-
         }
         fetchPlaylist();
     }, [id]);
+
+    const handleDelete = async () => {
+
+        try {
+            let response = await APIClientSecure.delete(`${config.api.playlist.list}${playlist.id}`);
+            response = await APIClientSecure.get(
+                config.api.playlist.list
+            );
+            const data = await response.data;
+            setPlaylists(data);
+            navigate("/");
+        } catch (e) {
+
+        }
+    }
     return (
         <Box
             sx={{
                 padding: 2
             }}
         >
+            <Button
+                variant="contained"
+                color="error"
+                onClick={handleDelete}
+            >
+                Delete
+            </Button>
             <div style={{
                 display: "flex",
                 alignItems: "center",
