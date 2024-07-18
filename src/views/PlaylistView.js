@@ -1,18 +1,25 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
-import {LibraryMusic} from "@mui/icons-material";
+import {LibraryMusic, MoreHoriz, PlayArrow} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
-import {Box, Button} from "@mui/material";
+import {Box, Button, Popover} from "@mui/material";
 import usePlaylists from "../hooks/usePlaylists";
+import {SongContext} from "../context/songContext";
+import useSongQueue from "../hooks/useSongQueue";
+
 
 export const PlaylistView = () => {
     const {id} = useParams();
     const [songs, setSongs] = useState([]);
     const [playlist, setPlaylist] = useState(null);
+    const [open, setOpen] = useState(false);
     const {setPlaylists} = usePlaylists();
+    const {setCurrentSong} = useContext(SongContext);
+    const {setSongQueue} = useSongQueue();
     const navigate = useNavigate();
+    const [anchorElem, setAnchorElem] = useState(null);
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -36,8 +43,12 @@ export const PlaylistView = () => {
         fetchPlaylist();
     }, [id]);
 
-    const handleDelete = async () => {
+    const handlePlay = () => {
+        setSongQueue(songs);
+        setCurrentSong(songs[0]);
+    }
 
+    const handleDelete = async () => {
         try {
             await APIClientSecure.delete(`${config.api.playlist.list}${playlist.id}`);
             const response = await APIClientSecure.get(
@@ -56,13 +67,6 @@ export const PlaylistView = () => {
                 padding: 2
             }}
         >
-            <Button
-                variant="contained"
-                color="error"
-                onClick={handleDelete}
-            >
-                Delete
-            </Button>
             <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -92,6 +96,81 @@ export const PlaylistView = () => {
                 )}
 
             </div>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 3,
+                }}
+            >
+                <Box
+                    className="playButton"
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "#1fdf64",
+                        borderRadius: "50%",
+                        width: 48,
+                        height: 48,
+                    }}
+                >
+                    <PlayArrow
+                        onClick={handlePlay}
+                        sx={{
+                            fontSize: 24,
+                            color: "black"
+                        }}
+                    />
+                </Box>
+                <MoreHoriz
+                    onClick={(event) => {
+                        setOpen(true);
+                        setAnchorElem(event.target);
+                    }}
+                    className="controlButton"
+                />
+
+                <Popover
+                    open={open}
+                    anchorEl={anchorElem}
+                    onClose={() => {
+                        setOpen(false);
+                        setAnchorElem(null);
+                    }}
+                    disableRestoreFocus
+                    sx={{
+                        '& .MuiPaper-root': {
+                            marginTop: "1rem",
+                            backgroundColor: '#282828',
+                            color: 'white',
+                        },
+                    }}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            padding: 2,
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </Button>
+                    </Box>
+                </Popover>
+
+            </Box>
             <div style={{
                 display: "flex",
                 padding: 6,

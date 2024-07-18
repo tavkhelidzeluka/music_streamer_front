@@ -201,6 +201,7 @@ body {
 
 .controlButton {
     color: gray;
+    cursor: pointer;
 }
 
 .controlButton:hover {
