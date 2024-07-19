@@ -192,7 +192,14 @@ export const PlaylistView = () => {
                     Song
                 </div>
             </div>
-            {songs.map((song, i) => <SongCard key={song.id} song={song} number={i + 1}/>)}
+            {songs.map((song, i) => (
+                <SongCard
+                    onPlay={() => {
+                        setSongQueue(songs);
+                    }}
+                    key={song.id} song={song} number={i + 1}
+                />
+            ))}
         </Box>
     );
 };
