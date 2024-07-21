@@ -10,15 +10,7 @@ import {PlaylistView} from "./views/PlaylistView";
 import SearchView from "./views/SearchView";
 import PlaylistProvider from "./context/PlaylistProvider";
 import SongQueueProvider from "./context/SongQueueProvider";
-
-const SignOutView = () => {
-    const navigate = useNavigate();
-    useEffect(() => {
-        navigate("/sign/in/");
-    }, []);
-
-    return (<></>);
-}
+import SignOutView from "./views/SignOut";
 
 
 function App() {

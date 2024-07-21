@@ -105,12 +105,15 @@ export const MediaPlayer = () => {
                 playPrevSong();
             }
         };
+        const audioTag = audioTagRef.current;
+        if (!audioTag)
+            return;
 
         document.addEventListener('keydown', handleChange);
-        audioTagRef.current.addEventListener('ended', handleEnd);
+        audioTag.addEventListener('ended', handleEnd);
 
         return () => {
-            audioTagRef.current.removeEventListener('ended', handleEnd);
+            audioTag.removeEventListener('ended', handleEnd);
             document.removeEventListener('keydown', handleChange);
         }
     }, [audioTagRef, songQueue, currentSong]);
@@ -190,8 +193,8 @@ export const MediaPlayer = () => {
                 ref={audioTagRef}
                 src={currentSong && config.api.stream(currentSong.id)}
                 autoPlay
-                preload="auto">
-
+                preload="none"
+            >
             </audio>
             <div style={{
                 flex: 3,
