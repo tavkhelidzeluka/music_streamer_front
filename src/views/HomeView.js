@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {config} from "../config";
 import {Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
@@ -7,9 +7,12 @@ import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
 import Loading from "../components/Loading";
 import usePlaylists from "../hooks/usePlaylists";
+import {SongContext} from "../context/songContext";
 
 export const HomeView = () => {
     const {playlists, setPlaylists} = usePlaylists();
+    const {currentSong} = useContext(SongContext);
+
 
     const [loading, setLoading] = useState(true);
     const location = useLocation();
@@ -31,7 +34,7 @@ export const HomeView = () => {
         }
         fetchAlbums();
     }, []);
-
+    console.log(currentSong);
 
     return (
         <div style={{display: "flex", flexFlow: "column", height: "100%"}}>
@@ -114,6 +117,30 @@ export const HomeView = () => {
 
                 </Box>
                 <div className="contentTile" style={{flex: 3}}>
+                    <img
+                        style={{
+                            borderRadius: 6,
+                        }}
+                        src={currentSong.album.cover}
+                        alt={currentSong.name}
+                        width="100%"
+
+                    />
+                    <h2
+                        style={{
+                            margin: 0
+                        }}
+                    >
+                        {currentSong.name}
+                    </h2>
+                    <p
+                        style={{
+                            margin: 0,
+                            color: "#a7a7a3"
+                        }}
+                    >
+                        {currentSong.artists.map(artist => <small>{artist.name}</small>)}
+                    </p>
 
                 </div>
             </div>
