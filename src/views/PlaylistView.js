@@ -1,7 +1,7 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {config} from "../config";
 import {SongCard} from "../components/SongCard";
-import {LibraryMusic, MoreHoriz, PlayArrow} from "@mui/icons-material";
+import {LibraryMusic, MoreHoriz, PauseOutlined, PlayArrow} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import {Box, Button, Popover} from "@mui/material";
@@ -16,10 +16,11 @@ export const PlaylistView = () => {
     const [playlist, setPlaylist] = useState(null);
     const [open, setOpen] = useState(false);
     const {setPlaylists} = usePlaylists();
-    const {setCurrentSong} = useContext(SongContext);
+    const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const {setSongQueue} = useSongQueue();
     const navigate = useNavigate();
     const [anchorElem, setAnchorElem] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -30,6 +31,9 @@ export const PlaylistView = () => {
                 const data = await response.data;
                 setSongs(data.songs);
                 setPlaylist(data);
+                setIsPlaying(
+                    sound && currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === data?.id
+                )
             } catch (e) {
                 if (e?.response) {
                     if (e.response?.status === 401) {
@@ -43,9 +47,34 @@ export const PlaylistView = () => {
         fetchPlaylist();
     }, [id]);
 
+    useEffect(() => {
+        setIsPlaying(
+            sound && currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === playlist?.id
+        )
+    }, [currentSong]);
+
     const handlePlay = () => {
+        if (isPlaying) {
+            setSound(false);
+            setIsPlaying(false);
+            return;
+        }
+        if (currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === playlist?.id) {
+            setSound(true);
+            setIsPlaying(true);
+            return;
+        }
+        const playedFrom = {
+                type: 'playlist',
+                data: playlist
+        };
         setSongQueue(songs);
-        setCurrentSong(songs[0]);
+        setCurrentSong({
+            ...songs[0],
+            playedFrom,
+        });
+        setSound(true);
+        setIsPlaying(true);
     }
 
     const handleDelete = async () => {
@@ -115,13 +144,23 @@ export const PlaylistView = () => {
                         height: 48,
                     }}
                 >
-                    <PlayArrow
-                        onClick={handlePlay}
-                        sx={{
-                            fontSize: 24,
-                            color: "black"
-                        }}
-                    />
+                    {isPlaying ? (
+                        <PauseOutlined
+                            onClick={handlePlay}
+                            sx={{
+                                fontSize: 24,
+                                color: "black"
+                            }}
+                        />
+                    ) : (
+                        <PlayArrow
+                            onClick={handlePlay}
+                            sx={{
+                                fontSize: 24,
+                                color: "black"
+                            }}
+                        />
+                    )}
                 </Box>
                 <MoreHoriz
                     onClick={(event) => {
@@ -197,7 +236,18 @@ export const PlaylistView = () => {
                     onPlay={() => {
                         setSongQueue(songs);
                     }}
-                    key={song.id} song={song} number={i + 1}
+                    onPause={() => {
+                        setIsPlaying(false);
+                    }}
+                    key={song.id}
+                    song={{
+                        ...song,
+                        playedFrom: {
+                            type: 'playlist',
+                            data: playlist
+                        }
+                }}
+                        number={i + 1}
                 />
             ))}
         </Box>

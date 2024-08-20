@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import InfiniteScrollBox from "./InfiniteScrollBox";
 import {PlayArrow} from "@mui/icons-material";
 import {SongCard} from "./SongCard";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {SongContext} from "../context/songContext";
 import useSongQueue from "../hooks/useSongQueue";
 

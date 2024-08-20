@@ -310,7 +310,9 @@ export const SongCard = (
         album,
         number,
         onPlay = () => {
-        }
+        },
+        onPause = () => {
+        },
     }) => {
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
@@ -323,6 +325,7 @@ export const SongCard = (
     }
 
     const pauseSong = () => {
+        onPause();
         setSound(false);
     }
 
