@@ -1,17 +1,18 @@
 import {useContext, useEffect, useState} from "react";
 import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
-import {Add, AddCircleOutline, PlayArrowRounded} from "@mui/icons-material";
+import {Add, AddCircleOutline, Favorite, FavoriteBorder, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
 import {config} from "../config";
-import {Box, Button, Checkbox, FormControlLabel, Popover} from "@mui/material";
+import {Box, Button, Checkbox, FormControl, FormControlLabel, Popover} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import usePlaylists from "../hooks/usePlaylists";
-import useSongQueue from "../hooks/useSongQueue";
 
-const SongManageButton = ({id}) => {
+
+const SongManageButton = ({song}) => {
+    const {id, is_liked} = song;
     const [anchorElem, setAnchorElem] = useState(null);
     const [hovered, setHovered] = useState(false);
     const [playlists, setPlaylist] = useState([]);
@@ -20,6 +21,8 @@ const SongManageButton = ({id}) => {
     const navigate = useNavigate();
     const [selectedPlaylists, setSelectedPlaylists] = useState([]);
     const [changedPlaylists, setChangedPlaylists] = useState([]);
+    const [favorite, setFavorite] = useState(is_liked);
+
 
     const updateSelectedPlaylist = () => {
         setSelectedPlaylists([]);
@@ -39,9 +42,19 @@ const SongManageButton = ({id}) => {
         setPlaylist(data);
         updateSelectedPlaylist();
     };
-
+    const fetchIsFavorite = async () => {
+        try {
+            const response = await APIClientSecure.get(
+                config.api.isLiked(id),
+            );
+            setFavorite(response.data.is_liked);
+        } catch (e) {
+            console.log(e.response);
+        }
+    }
     useEffect(() => {
         fetchPlaylist();
+        // fetchIsFavorite();
     }, []);
 
     useEffect(() => {
@@ -69,7 +82,15 @@ const SongManageButton = ({id}) => {
     };
 
     const addSongs = async () => {
-        console.log(selectedPlaylists);
+        if (favorite) {
+            try {
+                await APIClientSecure.post(
+                    config.api.like(id),
+                );
+            } catch (e) {
+                console.log(e.response);
+            }
+        }
         try {
             await APIClientSecure.post(
                 config.api.playlist.updatePlaylists,
@@ -118,7 +139,6 @@ const SongManageButton = ({id}) => {
         } catch (e) {
             console.log(e);
         }
-        console.log("Create new playlist!");
     };
 
     return (
@@ -191,6 +211,40 @@ const SongManageButton = ({id}) => {
                             </Box>
                         </Grid>
                         <hr/>
+
+                        <Grid
+                            xs={12}
+                            sx={{
+                                padding: 1
+                            }}
+                        >
+                            <Box sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                cursor: "pointer"
+                            }}
+                                 onClick={async () => {
+                                     try {
+                                         await APIClientSecure.post(
+                                             config.api.like(id),
+                                         );
+                                         setFavorite(true);
+                                     } catch (e) {
+                                         console.log(e.response);
+                                     }
+                                 }}
+                            >
+                                {favorite ? (
+                                    <Favorite/>
+                                ) : (
+                                    <FavoriteBorder/>
+                                )}
+                                <span>
+                                    Favorites
+                                </span>
+                            </Box>
+                        </Grid>
                         {playlists && (
                             playlists.map(playlist => (
                                 <Grid
@@ -250,7 +304,14 @@ const SongManageButton = ({id}) => {
 }
 
 
-export const SongCard = ({song, album, number, onPlay = () => {}}) => {
+export const SongCard = (
+    {
+        song,
+        album,
+        number,
+        onPlay = () => {
+        }
+    }) => {
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
@@ -300,10 +361,15 @@ export const SongCard = ({song, album, number, onPlay = () => {}}) => {
                     </Link>
                 </div>
             )}
-            <div style={{flex: 0.2}}>
+            <div style={{flex: 0.2, display: "flex", gap: 1}}>
+                {song.is_liked && !isHovered && (
+                    <Favorite sx={{
+                        color: "#22bf55"
+                    }}/>
+                )}
                 {isHovered && (
                     <div>
-                        <SongManageButton id={song.id}/>
+                        <SongManageButton song={song}/>
                     </div>
                 )}
             </div>

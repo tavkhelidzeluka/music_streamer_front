@@ -1,23 +1,27 @@
-const API_BASE_URL = 'http://localhost:8000';
+import {BASE_URL} from "./api/APIClient";
+
 export const config = {
     api: {
-        songs: `${API_BASE_URL}/songs/`,
-        stream: (id) => `${API_BASE_URL}/songs/${id}/stream/`,
+        songs: `/songs/`,
+        stream: (id) => `${BASE_URL}/songs/${id}/stream/`,
+        favorites: `/songs/favorites/`,
+        like: (id) => `/songs/${id}/like/`,
+        isLiked: (id) => `/songs/${id}/is_liked/`,
         album: {
-            list: `${API_BASE_URL}/albums/`,
-            detail: (id) => `${API_BASE_URL}/albums/${id}/`,
+            list: `/albums/`,
+            detail: (id) => `/albums/${id}/`,
         },
         playlist: {
-            list: `${API_BASE_URL}/playlists/`,
-            names: `${API_BASE_URL}/playlists/names/`,
-            detail: (id) => `${API_BASE_URL}/playlists/${id}/`,
-            addSong: (id) => `${API_BASE_URL}/playlists/${id}/add_song/`,
-            updatePlaylists: `${API_BASE_URL}/playlists/update_playlists/`
+            list: `/playlists/`,
+            names: `/playlists/names/`,
+            detail: (id) => `/playlists/${id}/`,
+            addSong: (id) => `/playlists/${id}/add_song/`,
+            updatePlaylists: `/playlists/update_playlists/`
         },
         auth: {
-            token: `${API_BASE_URL}/api/token/`,
-            refresh: `/api/token/refresh/`,
-            clear: `${API_BASE_URL}/api/token/clear/`,
+            token: `/token/`,
+            refresh: `/token/refresh/`,
+            clear: `/token/clear/`,
         }
     }
 };

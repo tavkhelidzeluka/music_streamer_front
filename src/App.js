@@ -11,6 +11,7 @@ import SearchView from "./views/SearchView";
 import PlaylistProvider from "./context/PlaylistProvider";
 import SongQueueProvider from "./context/SongQueueProvider";
 import SignOutView from "./views/SignOut";
+import FavoritesView from "./views/FavoritesView";
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                                 <Route path="/album/:id/" Component={AlbumView}/>
                                 <Route path="/playlist/:id/" Component={PlaylistView}/>
                                 <Route path="/search/" Component={SearchView}/>
+                                <Route path="/favorites/" Component={FavoritesView}/>
                             </Route>
                         </Route>
                         <Route path="/sign/in/" element={<SignInView/>}/>

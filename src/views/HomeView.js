@@ -1,7 +1,7 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {config} from "../config";
-import {Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
+import {Favorite, Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
@@ -72,6 +72,29 @@ export const HomeView = () => {
                         </div>
                     </div>
                     <div className="contentTile" style={{flex: "1 1 auto"}}>
+                        <div className="albumCard"
+                             style={{
+                                 display: "flex",
+                                 alignItems: "center",
+                                 gap: 10,
+                                 marginBottom: 10
+                             }}
+                             onClick={() => {
+                                 navigate(`/favorites/`);
+                             }}>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
+                                width: 56,
+                                height: 56,
+                                borderRadius: 10
+                            }}>
+                                <Favorite style={{width: 23, height: 23}}/>
+                            </div>
+                            Favorites
+                        </div>
                         {playlists.map(playlist => (
                             <div key={playlist.id}
                                  className="albumCard"
@@ -139,7 +162,7 @@ export const HomeView = () => {
                             color: "#a7a7a3"
                         }}
                     >
-                        {currentSong.artists.map(artist => <small>{artist.name}</small>)}
+                        {currentSong.artists.map(artist => <small key={artist.id}>{artist.name}</small>)}
                     </p>
 
                 </div>
