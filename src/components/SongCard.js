@@ -4,7 +4,7 @@ import {SongCover} from "./SongCover";
 import {Add, AddCircleOutline, Favorite, FavoriteBorder, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
 import {config} from "../config";
-import {Box, Button, Checkbox, FormControl, FormControlLabel, Popover} from "@mui/material";
+import {Box, Button, Checkbox, FormControlLabel, Popover} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {Link, useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";

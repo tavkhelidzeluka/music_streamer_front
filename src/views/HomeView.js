@@ -34,7 +34,6 @@ export const HomeView = () => {
         }
         fetchAlbums();
     }, []);
-    console.log(currentSong);
 
     return (
         <div style={{display: "flex", flexFlow: "column", height: "100%"}}>
@@ -140,31 +139,34 @@ export const HomeView = () => {
 
                 </Box>
                 <div className="contentTile" style={{flex: 3}}>
-                    <img
-                        style={{
-                            borderRadius: 6,
-                        }}
-                        src={currentSong.album.cover}
-                        alt={currentSong.name}
-                        width="100%"
+                    {currentSong && (
+                        <>
+                            <img
+                                style={{
+                                    borderRadius: 6,
+                                }}
+                                src={currentSong.album.cover}
+                                alt={currentSong.name}
+                                width="100%"
 
-                    />
-                    <h2
-                        style={{
-                            margin: 0
-                        }}
-                    >
-                        {currentSong.name}
-                    </h2>
-                    <p
-                        style={{
-                            margin: 0,
-                            color: "#a7a7a3"
-                        }}
-                    >
-                        {currentSong.artists.map(artist => <small key={artist.id}>{artist.name}</small>)}
-                    </p>
-
+                            />
+                            <h2
+                                style={{
+                                    margin: 0
+                                }}
+                            >
+                                {currentSong.name}
+                            </h2>
+                            <p
+                                style={{
+                                    margin: 0,
+                                    color: "#a7a7a3"
+                                }}
+                            >
+                                {currentSong.artists.map(artist => <small key={artist.id}>{artist.name}</small>)}
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
             <MediaPlayer/>
