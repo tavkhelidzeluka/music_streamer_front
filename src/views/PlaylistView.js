@@ -1,13 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {config} from "../config";
-import {SongCard} from "../components/SongCard";
-import {LibraryMusic, MoreHoriz, PauseOutlined, PlayArrow} from "@mui/icons-material";
+import {LibraryMusic, MoreHoriz} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
 import {Box, Button, Popover} from "@mui/material";
 import usePlaylists from "../hooks/usePlaylists";
-import {SongContext} from "../context/songContext";
-import useSongQueue from "../hooks/useSongQueue";
+import SongCollection from "../components/SongCollection";
 
 
 export const PlaylistView = () => {
@@ -16,11 +14,8 @@ export const PlaylistView = () => {
     const [playlist, setPlaylist] = useState(null);
     const [open, setOpen] = useState(false);
     const {setPlaylists} = usePlaylists();
-    const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
-    const {setSongQueue} = useSongQueue();
     const navigate = useNavigate();
     const [anchorElem, setAnchorElem] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -31,9 +26,6 @@ export const PlaylistView = () => {
                 const data = await response.data;
                 setSongs(data.songs);
                 setPlaylist(data);
-                setIsPlaying(
-                    sound && currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === data?.id
-                )
             } catch (e) {
                 if (e?.response) {
                     if (e.response?.status === 401) {
@@ -46,36 +38,6 @@ export const PlaylistView = () => {
         }
         fetchPlaylist();
     }, [id]);
-
-    useEffect(() => {
-        setIsPlaying(
-            sound && currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === playlist?.id
-        )
-    }, [currentSong]);
-
-    const handlePlay = () => {
-        if (isPlaying) {
-            setSound(false);
-            setIsPlaying(false);
-            return;
-        }
-        if (currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === playlist?.id) {
-            setSound(true);
-            setIsPlaying(true);
-            return;
-        }
-        const playedFrom = {
-                type: 'playlist',
-                data: playlist
-        };
-        setSongQueue(songs);
-        setCurrentSong({
-            ...songs[0],
-            playedFrom,
-        });
-        setSound(true);
-        setIsPlaying(true);
-    }
 
     const handleDelete = async () => {
         try {
@@ -91,165 +53,82 @@ export const PlaylistView = () => {
         }
     }
     return (
-        <Box
-            sx={{
-                padding: 2
-            }}
-        >
-            <div style={{
-                display: "flex",
-                alignItems: "center",
-                padding: 6,
-                marginBottom: '1rem',
-                gap: "1rem",
-            }}
-            >
-                {playlist && (
-                    <>
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            background: "#272727",
-                            width: 256,
-                            height: 256,
-                            borderRadius: 10
-                        }}>
-                            <LibraryMusic style={{width: 128, height: 128}}/>
-                        </div>
-                        <div>
-                            <div style={{fontSize: 48}}>{playlist.name}</div>
-                            <div>{playlist.user.name}</div>
-                        </div>
-                    </>
-                )}
-
-            </div>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 3,
-                }}
-            >
-                <Box
-                    className="playButton"
-                    sx={{
+        <SongCollection
+            songs={songs}
+            totalSongs={songs.length}
+            collectionCover={(
+                <>
+                    <div style={{
                         display: "flex",
-                        alignItems: "center",
                         justifyContent: "center",
-                        background: "#1fdf64",
-                        borderRadius: "50%",
-                        width: 48,
-                        height: 48,
-                    }}
-                >
-                    {isPlaying ? (
-                        <PauseOutlined
-                            onClick={handlePlay}
-                            sx={{
-                                fontSize: 24,
-                                color: "black"
-                            }}
-                        />
-                    ) : (
-                        <PlayArrow
-                            onClick={handlePlay}
-                            sx={{
-                                fontSize: 24,
-                                color: "black"
-                            }}
-                        />
-                    )}
-                </Box>
-                <MoreHoriz
-                    onClick={(event) => {
-                        setOpen(true);
-                        setAnchorElem(event.target);
-                    }}
-                    className="controlButton"
-                />
+                        alignItems: "center",
+                        background: "#272727",
+                        width: 200,
+                        height: 200,
+                        borderRadius: 6
+                    }}>
+                        <LibraryMusic style={{width: 128, height: 128}}/>
+                    </div>
+                </>
+            )}
+            collectionName={playlist?.name}
+            checkIsPlaying={(currentSong) => currentSong?.playedFrom?.type === 'playlist' && currentSong?.playedFrom?.data?.id === playlist?.id}
+            extras={() => ({
+                playedFrom: {
+                    type: 'playlist',
+                    data: playlist
+                }
+            })}
+            subNav={(
+                <>
+                    <MoreHoriz
+                        onClick={(event) => {
+                            setOpen(true);
+                            setAnchorElem(event.target);
+                        }}
+                        className="controlButton"
+                    />
 
-                <Popover
-                    open={open}
-                    anchorEl={anchorElem}
-                    onClose={() => {
-                        setOpen(false);
-                        setAnchorElem(null);
-                    }}
-                    disableRestoreFocus
-                    sx={{
-                        '& .MuiPaper-root': {
-                            marginTop: "1rem",
-                            backgroundColor: '#282828',
-                            color: 'white',
-                        },
-                    }}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                >
-                    <Box
+                    <Popover
+                        open={open}
+                        anchorEl={anchorElem}
+                        onClose={() => {
+                            setOpen(false);
+                            setAnchorElem(null);
+                        }}
+                        disableRestoreFocus
                         sx={{
-                            padding: 2,
+                            '& .MuiPaper-root': {
+                                marginTop: "1rem",
+                                backgroundColor: '#282828',
+                                color: 'white',
+                            },
+                        }}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
                         }}
                     >
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={handleDelete}
+                        <Box
+                            sx={{
+                                padding: 2,
+                            }}
                         >
-                            Delete
-                        </Button>
-                    </Box>
-                </Popover>
-
-            </Box>
-            <div style={{
-                display: "flex",
-                padding: 6,
-                marginBottom: '1rem',
-                gap: 3,
-                borderBottom: "1px solid gray",
-            }}>
-                <div
-                    style={{
-                        flex: 0.2,
-                        textAlign: "center"
-                    }}>
-                    #
-                </div>
-                <div
-                    style={{
-                        flex: 3,
-                    }}>
-                    Song
-                </div>
-            </div>
-            {songs.map((song, i) => (
-                <SongCard
-                    onPlay={() => {
-                        setSongQueue(songs);
-                    }}
-                    onPause={() => {
-                        setIsPlaying(false);
-                    }}
-                    key={song.id}
-                    song={{
-                        ...song,
-                        playedFrom: {
-                            type: 'playlist',
-                            data: playlist
-                        }
-                }}
-                        number={i + 1}
-                />
-            ))}
-        </Box>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </Button>
+                        </Box>
+                    </Popover>
+                </>
+            )}
+        />
     );
 };

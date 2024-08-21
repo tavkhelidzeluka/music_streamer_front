@@ -1,18 +1,48 @@
 import {Box} from "@mui/material";
 import InfiniteScrollBox from "./InfiniteScrollBox";
-import {PlayArrow} from "@mui/icons-material";
+import {PauseOutlined, PlayArrow} from "@mui/icons-material";
 import {SongCard} from "./SongCard";
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {SongContext} from "../context/songContext";
 import useSongQueue from "../hooks/useSongQueue";
 
-export const SongCollection = ({songs, collectionCover, collectionName, totalSongs = 0}) => {
-    const {setCurrentSong} = useContext(SongContext);
+export const SongCollection = (
+    {
+        songs,
+        collectionCover,
+        collectionName,
+        totalSongs = 0,
+        checkIsPlaying = (currentSong) => false,
+        extras = () => ({}),
+        subNav = null,
+    }
+) => {
+    const {setCurrentSong, setSound, currentSong, sound} = useContext(SongContext);
     const {setSongQueue} = useSongQueue();
+    const [isPlaying, setIsPlaying] = useState(sound && checkIsPlaying(currentSong));
+
+    useEffect(() => {
+        setIsPlaying(sound && checkIsPlaying(currentSong));
+    }, [currentSong, sound, checkIsPlaying]);
 
     const handlePlay = () => {
+        if (isPlaying) {
+            setSound(false);
+            setIsPlaying(false);
+            return;
+        }
+        if (checkIsPlaying(currentSong)) {
+            setSound(true);
+            setIsPlaying(true);
+            return;
+        }
         setSongQueue(songs);
-        setCurrentSong(songs[0]);
+        setCurrentSong({
+            ...songs[0],
+            ...extras(),
+        });
+        setSound(true);
+        setIsPlaying(true);
     }
     return (
         <Box
@@ -39,17 +69,7 @@ export const SongCollection = ({songs, collectionCover, collectionName, totalSon
                         gap: "1rem",
                     }}
                 >
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
-                        width: 200,
-                        height: 200,
-                        borderRadius: 6
-                    }}>
-                        {collectionCover}
-                    </div>
+                    {collectionCover}
                     <div>
                         <h1 style={{fontSize: 48}}>
                             {collectionName}
@@ -78,15 +98,26 @@ export const SongCollection = ({songs, collectionCover, collectionName, totalSon
                             width: 48,
                             height: 48,
                         }}
+                        onClick={handlePlay}
+
                     >
-                        <PlayArrow
-                            onClick={handlePlay}
-                            sx={{
-                                fontSize: 24,
-                                color: "black"
-                            }}
-                        />
+                        {isPlaying ? (
+                            <PauseOutlined
+                                sx={{
+                                    fontSize: 24,
+                                    color: "black"
+                                }}
+                            />
+                        ) : (
+                            <PlayArrow
+                                sx={{
+                                    fontSize: 24,
+                                    color: "black"
+                                }}
+                            />
+                        )}
                     </Box>
+                    {subNav}
                 </Box>
                 <div style={{
                     display: "flex",
@@ -112,7 +143,15 @@ export const SongCollection = ({songs, collectionCover, collectionName, totalSon
                 {songs.map((song, i) => (
                     <SongCard
                         onPlay={() => {
+                            setIsPlaying(true);
                             setSongQueue(songs);
+                            setCurrentSong(prev => ({
+                                ...prev,
+                                ...extras(),
+                            }))
+                        }}
+                        onPause={() => {
+                            setIsPlaying(false);
                         }}
                         key={song.id} song={song} number={i + 1}
                     />

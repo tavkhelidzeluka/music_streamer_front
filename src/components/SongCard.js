@@ -319,14 +319,14 @@ export const SongCard = (
     const [album_,] = useState(song.album || album);
 
     const playSong = () => {
-        onPlay();
         setCurrentSong({...song, album: album_});
         setSound(true);
+        onPlay();
     }
 
     const pauseSong = () => {
-        onPause();
         setSound(false);
+        onPause();
     }
 
     return (

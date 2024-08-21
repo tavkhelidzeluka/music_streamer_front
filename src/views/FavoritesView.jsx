@@ -1,13 +1,9 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {config} from "../config";
-import {SongCard} from "../components/SongCard";
-import {Favorite, LibraryMusic, PlayArrow} from "@mui/icons-material";
+import {Favorite} from "@mui/icons-material";
 import {useNavigate, useParams} from "react-router-dom";
 import {APIClientSecure} from "../api";
-import {Box} from "@mui/material";
 import {SongContext} from "../context/songContext";
-import useSongQueue from "../hooks/useSongQueue";
-import InfiniteScrollBox from "../components/InfiniteScrollBox";
 import SongCollection from "../components/SongCollection";
 
 
@@ -41,8 +37,25 @@ export const FavoritesView = () => {
     return (
         <SongCollection
             songs={songs}
-            collectionCover={<Favorite style={{width: 128, height: 128}}/>}
+            totalSongs={songs.length}
+            collectionCover={(
+                <>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
+                        width: 200,
+                        height: 200,
+                        borderRadius: 6
+                    }}>
+                        <Favorite style={{width: 128, height: 128}}/>
+                    </div>
+                </>
+            )}
             collectionName="Favorites"
+            checkIsPlaying={(currentSong) => currentSong?.playedFrom?.type === 'favorites'}
+            extras={() => ({playedFrom: {type: 'favorites'}})}
         />
     );
 };
