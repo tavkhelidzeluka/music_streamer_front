@@ -12,6 +12,7 @@ export const SongList = () => {
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]);
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const {songQueue, setSongQueue} = useSongQueue();
@@ -22,7 +23,8 @@ export const SongList = () => {
             console.debug(`Fetch Songs page: ${page}`);
             setLoading(true);
             const response = await APIClientSecure.get(`${config.api.songs}?page=${page}`);
-            const {results} = await response.data;
+            const {results, count} = await response.data;
+            setTotalPages(count / 20);
             setSongs(prev => [...prev, ...results]);
             setLoading(false);
         } catch (error) {
@@ -53,7 +55,8 @@ export const SongList = () => {
     }, []);
 
     useEffect(() => {
-        fetchSongs();
+        if (totalPages === 0 || page <= totalPages)
+            fetchSongs();
     }, [page]);
 
     return (
