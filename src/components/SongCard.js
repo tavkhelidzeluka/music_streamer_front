@@ -11,8 +11,8 @@ import {APIClientSecure} from "../api";
 import usePlaylists from "../hooks/usePlaylists";
 
 
-const SongManageButton = ({song}) => {
-    const {id, is_liked} = song;
+const SongManageButton = ({song, setFavorite, isFavorite}) => {
+    const {id} = song;
     const [anchorElem, setAnchorElem] = useState(null);
     const [hovered, setHovered] = useState(false);
     const [playlists, setPlaylist] = useState([]);
@@ -21,7 +21,6 @@ const SongManageButton = ({song}) => {
     const navigate = useNavigate();
     const [selectedPlaylists, setSelectedPlaylists] = useState([]);
     const [changedPlaylists, setChangedPlaylists] = useState([]);
-    const [favorite, setFavorite] = useState(is_liked);
 
 
     const updateSelectedPlaylist = () => {
@@ -45,7 +44,6 @@ const SongManageButton = ({song}) => {
 
     useEffect(() => {
         fetchPlaylist();
-        // fetchIsFavorite();
     }, []);
 
     useEffect(() => {
@@ -71,16 +69,19 @@ const SongManageButton = ({song}) => {
             ]);
         }
     };
-
-    const addSongs = async () => {
-        if (favorite) {
-            try {
+    const likeSong = async () => {
+        try {
                 await APIClientSecure.post(
                     config.api.like(id),
                 );
             } catch (e) {
                 console.log(e.response);
             }
+    }
+
+    const addSongs = async () => {
+        if (isFavorite) {
+            await likeSong();
         }
         try {
             await APIClientSecure.post(
@@ -100,7 +101,7 @@ const SongManageButton = ({song}) => {
         try {
             let response = await APIClientSecure.get(config.api.playlist.names);
             const playlists = response.data;
-            let maxNum = 1;
+            let maxNum = 0;
             playlists.forEach(playlist => {
                 let [, num] = playlist.name.split("#");
                 if (num === undefined) {
@@ -145,16 +146,28 @@ const SongManageButton = ({song}) => {
                 }}
                 aria-owns={open ? 'mouse-over-popover' : undefined}
                 aria-haspopup="true"
-                onClick={(event) => open ? handleClose() : handleOpen(event)}
+                onClick={(event) => {
+                    if (!isFavorite) {
+                        likeSong();
+                        setFavorite(true);
+                        return;
+                    }
+                    open ? handleClose() : handleOpen(event);
+                }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
-                <AddCircleOutline
-                    sx={{
-                        color: hovered ? "white" : "gray",
-                        transform: hovered ? "scale(1.05)" : "none",
-                    }}
-                />
+                {!isFavorite ? (
+                    <FavoriteBorder/>
+                ) : (
+                    <AddCircleOutline
+                        sx={{
+                            color: hovered ? "white" : "gray",
+                            transform: hovered ? "scale(1.05)" : "none",
+                        }}
+                    />
+                )}
+
             </div>
             <Popover
                 open={open}
@@ -214,20 +227,20 @@ const SongManageButton = ({song}) => {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 1,
-                                cursor: "pointer"
+                                cursor: "pointer",
                             }}
                                  onClick={async () => {
                                      try {
                                          await APIClientSecure.post(
                                              config.api.like(id),
                                          );
-                                         setFavorite(true);
+                                         setFavorite((prev) => !prev);
                                      } catch (e) {
                                          console.log(e.response);
                                      }
                                  }}
                             >
-                                {favorite ? (
+                                {isFavorite ? (
                                     <Favorite/>
                                 ) : (
                                     <FavoriteBorder/>
@@ -309,6 +322,7 @@ export const SongCard = (
     const {currentSong, setCurrentSong, setSound, sound} = useContext(SongContext);
     const [isHovered, setIsHovered] = useState(false);
     const [album_,] = useState(song.album || album);
+    const [isFavorite, setFavorite] = useState(song.is_liked);
 
     const playSong = () => {
         setCurrentSong({...song, album: album_});
@@ -357,14 +371,16 @@ export const SongCard = (
                 </div>
             )}
             <div style={{flex: 0.2, display: "flex", gap: 1}}>
-                {song.is_liked && !isHovered && (
+                {isFavorite && !isHovered && (
                     <Favorite sx={{
                         color: "#22bf55"
                     }}/>
                 )}
+
+
                 {isHovered && (
                     <div>
-                        <SongManageButton song={song}/>
+                        <SongManageButton song={song} isFavorite={isFavorite} setFavorite={setFavorite}/>
                     </div>
                 )}
             </div>

@@ -13,7 +13,7 @@ export const SongList = () => {
     const [albums, setAlbums] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const {songQueue, setSongQueue} = useSongQueue();
 
@@ -93,7 +93,7 @@ export const SongList = () => {
                     marginTop: "64px"
                 }}
                 loading={loading}
-                onLoad={() => setPage((prev) => prev + 1)}
+                onLoad={() => {setPage((prev) => prev + 1)}}
             >
                 <div style={{
                     display: "flex",
