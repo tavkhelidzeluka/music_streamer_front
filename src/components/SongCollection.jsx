@@ -21,6 +21,19 @@ export const SongCollection = (
     const {setSongQueue} = useSongQueue();
     const [isPlaying, setIsPlaying] = useState(sound && checkIsPlaying(currentSong));
 
+    const switchSong = (song) => {
+        setSongQueue(
+            songs.map(song => ({
+                ...song,
+                ...extras(),
+            }))
+        );
+        setCurrentSong({
+            ...songs[0],
+            ...extras(),
+        });
+    }
+
     useEffect(() => {
         setIsPlaying(sound && checkIsPlaying(currentSong));
     }, [currentSong, sound, checkIsPlaying]);
@@ -36,11 +49,8 @@ export const SongCollection = (
             setIsPlaying(true);
             return;
         }
-        setSongQueue(songs);
-        setCurrentSong({
-            ...songs[0],
-            ...extras(),
-        });
+
+        switchSong(songs[0]);
         setSound(true);
         setIsPlaying(true);
     }
@@ -144,11 +154,7 @@ export const SongCollection = (
                     <SongCard
                         onPlay={() => {
                             setIsPlaying(true);
-                            setSongQueue(songs);
-                            setCurrentSong(prev => ({
-                                ...prev,
-                                ...extras(),
-                            }))
+                            switchSong(song);
                         }}
                         onPause={() => {
                             setIsPlaying(false);
