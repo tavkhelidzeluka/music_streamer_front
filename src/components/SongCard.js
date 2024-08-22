@@ -42,16 +42,7 @@ const SongManageButton = ({song}) => {
         setPlaylist(data);
         updateSelectedPlaylist();
     };
-    const fetchIsFavorite = async () => {
-        try {
-            const response = await APIClientSecure.get(
-                config.api.isLiked(id),
-            );
-            setFavorite(response.data.is_liked);
-        } catch (e) {
-            console.log(e.response);
-        }
-    }
+
     useEffect(() => {
         fetchPlaylist();
         // fetchIsFavorite();
@@ -99,6 +90,7 @@ const SongManageButton = ({song}) => {
                     song: id,
                 }
             );
+            handleClose();
         } catch (e) {
             console.log(e.response);
         }
