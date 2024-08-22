@@ -9,7 +9,6 @@ import {
     VolumeOffOutlined, PlayArrow, SkipNext, SkipPrevious
 } from "@mui/icons-material";
 import {ProgressBarChangeable} from "./components/ProgressBarChangeable";
-import {APIClient} from "./api";
 import useSongQueue from "./hooks/useSongQueue";
 
 const convertToMinute = (time) => {
@@ -60,7 +59,12 @@ const ControlButton = ({audioTagRef}) => {
 };
 
 const SoundControl = ({audioTagRef}) => {
-    const [volume, setVolume] = useState(1);
+    const [volume, setVolume] = useState(JSON.parse(localStorage.getItem("volume")) || 1);
+
+    useEffect(() => {
+        audioTagRef.current.volume = volume;
+        localStorage.setItem("volume", JSON.stringify(volume));
+    }, [volume]);
 
     return (
         <div style={{
@@ -74,7 +78,7 @@ const SoundControl = ({audioTagRef}) => {
 
             <ProgressBarChangeable width={"30%"}
                                    onMountCallback={(ref) => {
-                                       ref.current.style.width = `${audioTagRef.current.volume * 100}%`
+                                       ref.current.style.width = `${volume * 100}%`
                                    }}
                                    onMouseDown={(progressPerc) => {
                                        audioTagRef.current.volume = progressPerc;
@@ -87,10 +91,9 @@ export const MediaPlayer = () => {
     const audioTagRef = useRef();
     const {currentSong, setCurrentSong} = useContext(SongContext);
     const {songQueue} = useSongQueue();
-    const [timeIndicator, setTimeIndicator] = useState(
-        {current: convertToMinute(0), duration: convertToMinute(0)}
-    );
-
+    const [timeIndicator, setTimeIndicator] = useState({
+        current: convertToMinute(), duration: convertToMinute(0)
+    });
 
     useEffect(() => {
         const handleEnd = () => {
@@ -128,7 +131,7 @@ export const MediaPlayer = () => {
 
             setTimeIndicator({
                 current: convertToMinute(audioTag.currentTime),
-                duration: convertToMinute(audioTag.duration),
+                duration: convertToMinute(audioTag.duration || 0),
             });
         }
         const interval = setInterval(changeBar, 1000);
