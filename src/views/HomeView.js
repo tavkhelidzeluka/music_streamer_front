@@ -8,6 +8,7 @@ import {Box,} from "@mui/material";
 import Loading from "../components/Loading";
 import usePlaylists from "../hooks/usePlaylists";
 import {SongContext} from "../context/songContext";
+import InfiniteScrollBox from "../components/InfiniteScrollBox";
 
 const PlaylistCard = ({text, customCover, checkIsSelected, onClick}) => {
     const {currentSong, sound} = useContext(SongContext);
@@ -122,38 +123,53 @@ export const HomeView = () => {
                             <Search sx={{fontSize: 30}}/> Search
                         </div>
                     </div>
-                    <div className="contentTile" style={{flex: "1 1 auto"}}>
-                        <PlaylistCard
-                            onClick={
-                                () => {
-                                    navigate(`/favorites/`);
+                    <div className="contentTile"
+                         style={{
+                             flex: "1 1 auto",
+                             height: "100%",
+                             overflowY: "hidden",
+                             position: "relative",
+                             display: "flex",
+                             flexDirection: "column",
+                         }}
+                    >
+                        <InfiniteScrollBox
+                            loading={loading}
+                            onLoad={() => null}
+                        >
+
+                            <PlaylistCard
+                                onClick={
+                                    () => {
+                                        navigate(`/favorites/`);
+                                    }
                                 }
-                            }
-                            customCover={(
-                                <div style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
-                                    width: 56,
-                                    height: 56,
-                                    borderRadius: 10
-                                }}>
-                                    <Favorite style={{width: 23, height: 23}}/>
-                                </div>
+                                customCover={(
+                                    <div style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
+                                        width: 56,
+                                        height: 56,
+                                        borderRadius: 10
+                                    }}>
+                                        <Favorite style={{width: 23, height: 23}}/>
+                                    </div>
+                                )}
+                                text="Favorites"
+                                checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "favorites"}/>
+                            {playlists.map(playlist => <PlaylistCard
+                                key={playlist.id}
+                                text={playlist.name}
+                                onClick={
+                                    () => {
+                                        navigate(`/playlist/${playlist.id}/`);
+                                    }
+                                }
+                                checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "playlist" && currentSong?.playedFrom?.data?.id === playlist.id}/>
                             )}
-                            text="Favorites"
-                            checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "favorites"}/>
-                        {playlists.map(playlist => <PlaylistCard
-                            key={playlist.id}
-                            text={playlist.name}
-                            onClick={
-                                () => {
-                                    navigate(`/playlist/${playlist.id}/`);
-                                }
-                            }
-                            checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "playlist" && currentSong?.playedFrom?.data?.id === playlist.id}/>
-                        )}
+                        </InfiniteScrollBox>
                     </div>
                 </div>
                 <Box

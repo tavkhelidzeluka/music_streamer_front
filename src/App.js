@@ -1,7 +1,7 @@
 import './App.css';
 import {useEffect, useState} from "react";
 import {SongContext} from './context/songContext';
-import {Route, Routes, useNavigate} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import RequireAuth from "./routePermissions/RequireAuth";
 import {HomeView, SignInView} from "./views";
 import {AlbumView} from "./views/AlbumView";
@@ -22,7 +22,9 @@ function App() {
 
 
     useEffect(() => {
-        localStorage.setItem("currentSong", JSON.stringify(currentSong));
+        if (currentSong) {
+            localStorage.setItem("currentSong", JSON.stringify(currentSong));
+        }
     }, [currentSong]);
 
 
