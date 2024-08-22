@@ -1,13 +1,65 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {config} from "../config";
-import {Favorite, Home, HomeOutlined, LibraryMusic, Search} from "@mui/icons-material";
+import {Favorite, Home, HomeOutlined, LibraryMusic, Search, VolumeUp} from "@mui/icons-material";
 import {MediaPlayer} from "../MediaPlayer";
 import {APIClientSecure} from "../api";
 import {Box,} from "@mui/material";
 import Loading from "../components/Loading";
 import usePlaylists from "../hooks/usePlaylists";
 import {SongContext} from "../context/songContext";
+
+const PlaylistCard = ({text, customCover, checkIsSelected, onClick}) => {
+    const {currentSong, sound} = useContext(SongContext);
+    const [isPlaying, setIsPlaying] = useState(sound && checkIsSelected(currentSong));
+    const [isSelected, setIsSelected] = useState(checkIsSelected(currentSong));
+
+    useEffect(() => {
+        const isCurrentPlaylist = checkIsSelected(currentSong);
+        setIsPlaying(sound && isCurrentPlaylist);
+        setIsSelected(isCurrentPlaylist);
+    }, [currentSong, sound]);
+
+    return (
+        <div className="albumCard"
+             style={{
+                 display: "flex",
+                 alignItems: "center",
+                 gap: 10,
+                 marginBottom: 10
+             }}
+             onClick={onClick}>
+            {customCover ? customCover : (
+                <div style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    background: "#272727",
+                    width: 56,
+                    height: 56,
+                    borderRadius: 10
+                }}>
+                    <LibraryMusic style={{width: 23, height: 23}}/>
+                </div>
+            )}
+            <Box
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    color: isSelected ? "#1fdf64" : "#a7a7a3",
+                    flexGrow: "1",
+                }}
+            >
+                <span>
+                    {text}
+                </span>
+                {isPlaying && <VolumeUp/>}
+            </Box>
+        </div>
+    );
+}
+
 
 export const HomeView = () => {
     const {playlists, setPlaylists} = usePlaylists();
@@ -71,55 +123,37 @@ export const HomeView = () => {
                         </div>
                     </div>
                     <div className="contentTile" style={{flex: "1 1 auto"}}>
-                        <div className="albumCard"
-                             style={{
-                                 display: "flex",
-                                 alignItems: "center",
-                                 gap: 10,
-                                 marginBottom: 10
-                             }}
-                             onClick={() => {
-                                 navigate(`/favorites/`);
-                             }}>
-                            <div style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
-                                width: 56,
-                                height: 56,
-                                borderRadius: 10
-                            }}>
-                                <Favorite style={{width: 23, height: 23}}/>
-                            </div>
-                            Favorites
-                        </div>
-                        {playlists.map(playlist => (
-                            <div key={playlist.id}
-                                 className="albumCard"
-                                 style={{
-                                     display: "flex",
-                                     alignItems: "center",
-                                     gap: 10,
-                                     marginBottom: 10
-                                 }}
-                                 onClick={() => {
-                                     navigate(`/playlist/${playlist.id}`);
-                                 }}>
+                        <PlaylistCard
+                            onClick={
+                                () => {
+                                    navigate(`/favorites/`);
+                                }
+                            }
+                            customCover={(
                                 <div style={{
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    background: "#272727",
+                                    background: "linear-gradient(135deg, #4205ed, #b3d9ce)",
                                     width: 56,
                                     height: 56,
                                     borderRadius: 10
                                 }}>
-                                    <LibraryMusic style={{width: 23, height: 23}}/>
+                                    <Favorite style={{width: 23, height: 23}}/>
                                 </div>
-                                {playlist.name}
-                            </div>
-                        ))}
+                            )}
+                            text="Favorites"
+                            checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "favorites"}/>
+                        {playlists.map(playlist => <PlaylistCard
+                            key={playlist.id}
+                            text={playlist.name}
+                            onClick={
+                                () => {
+                                    navigate(`/playlist/${playlist.id}/`);
+                                }
+                            }
+                            checkIsSelected={(currentSong) => currentSong?.playedFrom?.type === "playlist" && currentSong?.playedFrom?.data?.id === playlist.id}/>
+                        )}
                     </div>
                 </div>
                 <Box
