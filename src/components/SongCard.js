@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import {SongContext} from "../context/songContext";
 import {SongCover} from "./SongCover";
-import {Add, AddCircleOutline, Favorite, FavoriteBorder, PlayArrowRounded} from "@mui/icons-material";
+import {Add, AddCircleOutline, Clear, Done, Favorite, FavoriteBorder, PlayArrowRounded} from "@mui/icons-material";
 import {DancingBlocks} from "./DancingBlocks";
 import {config} from "../config";
 import {Box, Button, Checkbox, FormControlLabel, Popover} from "@mui/material";
@@ -192,7 +192,7 @@ const SongManageButton = ({song, setFavorite, isFavorite}) => {
             >
                 <Box
                     sx={{
-                        padding: 2
+                        padding: 0
                     }}
                     className="addToPlaylistPopUp"
                 >
@@ -235,6 +235,7 @@ const SongManageButton = ({song, setFavorite, isFavorite}) => {
                                              config.api.like(id),
                                          );
                                          setFavorite((prev) => !prev);
+                                         setAnchorElem(null);
                                      } catch (e) {
                                          console.log(e.response);
                                      }
@@ -283,22 +284,25 @@ const SongManageButton = ({song, setFavorite, isFavorite}) => {
                         )}
                         <Grid xs={12}>
                             {changedPlaylists.length !== 0 && (
-                                <>
+                                <Box sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    padding: 1
+                                }}>
                                     <Button
                                         variant="contained"
                                         color="error"
-                                        sx={{marginRight: 1}}
                                         onClick={() => {
                                             fetchPlaylist();
                                             setChangedPlaylists([]);
                                         }}
                                     >
-                                        Clear
+                                        <Clear/>
                                     </Button>
-                                    <Button variant="contained" onClick={addSongs}>
-                                        Done
+                                    <Button variant="contained" onClick={addSongs} color="success">
+                                        <Done/>
                                     </Button>
-                                </>
+                                </Box>
                             )}
                         </Grid>
                     </Grid>

@@ -178,9 +178,6 @@ body {
 }
 
 .addToPlaylistPopUp {
-    width: 250px;
-    height: 500px;
-    /*border-radius: 6px;*/
     display: flex;
     justify-content: center;
     color: white;
