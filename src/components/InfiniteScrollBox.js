@@ -3,7 +3,7 @@ import ScrollBar from "./ScrollBar";
 import Loading from "./Loading";
 import {useCallback, useEffect, useRef} from "react";
 
-export const InfiniteScrollBox = ({children, sx, loading, onLoad}) => {
+export const InfiniteScrollBox = ({children, sx, loading, onLoad = () => {}}) => {
     const scrollableRef = useRef();
     const loader = useRef();
 

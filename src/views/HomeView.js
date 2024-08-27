@@ -126,9 +126,6 @@ export const HomeView = () => {
                     <div className="contentTile"
                          style={{
                              flex: "1 1 auto",
-                             height: "100%",
-                             overflowY: "hidden",
-                             position: "relative",
                              display: "flex",
                              flexDirection: "column",
                          }}
@@ -136,6 +133,9 @@ export const HomeView = () => {
                         <InfiniteScrollBox
                             loading={loading}
                             onLoad={() => null}
+                            sx={{
+                                padding: 0,
+                            }}
                         >
 
                             <PlaylistCard
@@ -178,7 +178,7 @@ export const HomeView = () => {
                         flex: 6,
                         overflowY: "hidden",
                         maxHeight: "100%",
-                        padding: 0
+                        padding: 0,
                     }}
                 >
                     {loading ? (
@@ -188,9 +188,9 @@ export const HomeView = () => {
                     )}
 
                 </Box>
-                <div className="contentTile" style={{flex: 3}}>
+                <div className="contentTile" style={{flex: 3, display: "flex"}}>
                     {currentSong && (
-                        <>
+                        <InfiniteScrollBox>
                             <img
                                 style={{
                                     borderRadius: 6,
@@ -202,20 +202,55 @@ export const HomeView = () => {
                             />
                             <h2
                                 style={{
-                                    margin: 0
+                                    margin: '1rem 0',
                                 }}
                             >
                                 {currentSong.name}
                             </h2>
-                            <p
+                            <Box
                                 style={{
                                     margin: 0,
-                                    color: "#a7a7a3"
                                 }}
                             >
-                                {currentSong.artists.map(artist => <small key={artist.id}>{artist.name}</small>)}
-                            </p>
-                        </>
+                                {currentSong.artists.map(artist => (
+                                    <Box
+                                        key={artist.id}
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: 1,
+                                            borderRadius: 2,
+                                            background: "#272727",
+                                            overflow: "hidden",
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                background: `linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url(${artist.avatar})`,
+                                                backgroundSize: "cover",
+                                                backgroundPosition: "center",
+                                                height: 300,
+                                                padding: 1,
+                                            }}
+                                        >
+                                            <h3 style={{ fontSize: 14}}>
+                                                About {artist.name}
+                                            </h3>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                padding: 1
+                                            }}
+                                        >
+                                            <p>
+                                                {artist.bio.slice(0, 100)} ...
+                                            </p>
+                                        </Box>
+
+                                    </Box>
+                                ))}
+                            </Box>
+                        </InfiniteScrollBox>
                     )}
                 </div>
             </div>
