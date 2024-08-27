@@ -3,7 +3,7 @@ import ScrollBar from "./ScrollBar";
 import Loading from "./Loading";
 import {useCallback, useEffect, useRef} from "react";
 
-export const InfiniteScrollBox = ({children, sx, loading, onLoad = () => {}}) => {
+export const InfiniteScrollBox = ({children, sx, loading, onLoad = () => {}, offset = 0}) => {
     const scrollableRef = useRef();
     const loader = useRef();
 
@@ -43,7 +43,7 @@ export const InfiniteScrollBox = ({children, sx, loading, onLoad = () => {}}) =>
             </Box>
             <ScrollBar
                 scrollableRef={scrollableRef}
-                offset={64}
+                offset={offset}
             />
         </>
     );

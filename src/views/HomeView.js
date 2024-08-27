@@ -128,16 +128,15 @@ export const HomeView = () => {
                              flex: "1 1 auto",
                              display: "flex",
                              flexDirection: "column",
+                             padding: 0
                          }}
                     >
                         <InfiniteScrollBox
                             loading={loading}
-                            onLoad={() => null}
                             sx={{
-                                padding: 0,
+                                padding: 1
                             }}
                         >
-
                             <PlaylistCard
                                 onClick={
                                     () => {
@@ -188,9 +187,14 @@ export const HomeView = () => {
                     )}
 
                 </Box>
-                <div className="contentTile" style={{flex: 3, display: "flex"}}>
+                <div className="contentTile" style={{flex: 3, display: "flex", padding: 0}}>
                     {currentSong && (
-                        <InfiniteScrollBox>
+                        <InfiniteScrollBox
+                            sx={{
+                                padding: '2rem',
+                                width: '100%',
+                            }}
+                        >
                             <img
                                 style={{
                                     borderRadius: 6,
@@ -198,7 +202,6 @@ export const HomeView = () => {
                                 src={currentSong.album.cover}
                                 alt={currentSong.name}
                                 width="100%"
-
                             />
                             <h2
                                 style={{
