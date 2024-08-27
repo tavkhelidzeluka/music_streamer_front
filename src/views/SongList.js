@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {config} from "../config";
 import {useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
-import {Box} from "@mui/material";
+import {Box, Skeleton} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import SongListTable from "./SongListTable";
 import InfiniteScrollBox from "../components/InfiniteScrollBox";
@@ -93,25 +93,38 @@ export const SongList = () => {
                     marginTop: "64px"
                 }}
                 loading={loading}
-                onLoad={() => {setPage((prev) => prev + 1)}}
+                onLoad={() => {
+                    setPage((prev) => prev + 1)
+                }}
             >
                 <div style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginBottom: "1rem"
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, 1fr)",
+                    gridTemplateRows: "repeat(2, 60px)",
+                    marginBottom: "1rem",
+                    gap: "1rem",
+                    width: "100%",
                 }}>
-                    {albums.map(album => {
-                        return (
-                            <div key={album.id}
-                                 style={{width: "50%"}}
-                                 className="albumCard"
-                                 onClick={() => navigate(`/album/${album.id}/`)}>
-                                <img src={album.cover} width={50}
-                                     style={{borderRadius: "6px", marginRight: "1rem"}}/>
-                                {album.title}
-                            </div>
-                        )
-                    })}
+
+                    {albums.length === 0 ? (
+                        <>
+                            {Array.from({length: 8}).map((_, index) => (
+                                <Skeleton key={index} variant="rectangular" height="100%"/>
+                            ))}
+                        </>
+                    ) : (
+                        albums.map(album => {
+                            return (
+                                <div key={album.id}
+                                     className="albumCard"
+                                     onClick={() => navigate(`/album/${album.id}/`)}>
+                                    <img src={album.cover} width={50}
+                                         style={{borderRadius: "6px", marginRight: "1rem"}}/>
+                                    {album.title}
+                                </div>
+                            )
+                        })
+                    )}
 
                 </div>
                 <SongListTable
