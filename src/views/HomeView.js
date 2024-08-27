@@ -95,7 +95,7 @@ export const HomeView = () => {
                 gap: 10,
                 padding: 10,
                 flex: "1 1 auto",
-                maxHeight: "87%",
+                maxHeight: "90%",
             }}>
                 <div style={{flex: 3, display: "flex", flexFlow: "column", gap: 10}}>
                     <div className="contentTile">

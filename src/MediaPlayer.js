@@ -177,7 +177,7 @@ export const MediaPlayer = () => {
                 flexDirection: "column"
             }}>
                 <div style={{
-                    margin: '0 0 1rem',
+                    margin: '0 0 0.2rem',
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

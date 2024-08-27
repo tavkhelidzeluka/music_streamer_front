@@ -79,9 +79,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
     box-sizing: border-box;
-    height: 100px;
+    flex: 1 1 auto;
+    padding: 0 1.5rem;
 }
 
 .progressBarWrapper {
