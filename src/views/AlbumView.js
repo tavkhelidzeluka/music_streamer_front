@@ -44,7 +44,7 @@ export const AlbumView = () => {
                     )}
                 </>
             )}
-            checkIsPlaying={(currentSong) => currentSong?.playedFrom?.type === 'album'}
+            checkIsPlaying={(currentSong) => currentSong?.playedFrom?.type === 'album' && currentSong?.playedFrom?.id === album?.id}
             extras={
                 () => ({
                     playedFrom: {type: 'album', id: album?.id},
