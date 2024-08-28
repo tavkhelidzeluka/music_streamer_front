@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {config} from "../config";
 import {useNavigate} from "react-router-dom";
 import {APIClientSecure} from "../api";
-import {Box, Skeleton} from "@mui/material";
+import {Box, Skeleton, Typography} from "@mui/material";
 import AvatarWithUserControls from "../components/AvatarWithUserControls";
 import SongListTable from "./SongListTable";
 import InfiniteScrollBox from "../components/InfiniteScrollBox";
@@ -100,10 +100,9 @@ export const SongList = () => {
                 <div style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(4, 1fr)",
-                    gridTemplateRows: "repeat(2, 60px)",
+                    gridTemplateRows: "repeat(2, 50px)",
                     marginBottom: "1rem",
-                    gap: "1rem",
-                    width: "100%",
+                    gap: "0.5rem",
                 }}>
 
                     {albums.length === 0 ? (
@@ -117,10 +116,19 @@ export const SongList = () => {
                             return (
                                 <div key={album.id}
                                      className="albumCard"
+                                     style={{
+                                         background: 'hsla(0, 0%, 100%, .1)'
+                                     }}
                                      onClick={() => navigate(`/album/${album.id}/`)}>
-                                    <img src={album.cover} width={50}
-                                         style={{borderRadius: "6px", marginRight: "1rem"}}/>
-                                    {album.title}
+                                    <img src={album.cover} width={50} height="100%"
+                                         style={{
+                                             marginRight: "1rem",
+                                             borderTopLeftRadius: "6px",
+                                             borderBottomLeftRadius: "6px"
+                                         }}/>
+                                    <Typography>
+                                        {album.title}
+                                    </Typography>
                                 </div>
                             )
                         })

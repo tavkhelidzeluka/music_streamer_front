@@ -51,6 +51,12 @@ body {
     padding: 6px;
     color: #a7a7a3;
 }
+.albumCard {
+    padding: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .songCard:hover, .albumCard:hover {
     background: #2a2a2a;
