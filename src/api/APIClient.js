@@ -1,7 +1,7 @@
 import axios from "axios";
 import {config} from "../config";
 
-export const BASE_URL = "http://localhost:8000/api";
+export const BASE_URL = "https://music-streamer-back.onrender.com/api";
 export const APIClient = axios.create({
     baseURL: BASE_URL,
 });

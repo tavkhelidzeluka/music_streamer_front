@@ -97,7 +97,7 @@ export const MediaPlayer = () => {
     const {currentSong, setCurrentSong} = useContext(SongContext);
     const {songQueue} = useSongQueue();
     const [timeIndicator, setTimeIndicator] = useState({
-        current: convertToMinute(), duration: convertToMinute(0)
+        current: convertToMinute(), duration: convertToMinute(currentSong.duration)
     });
     const [repeat, setRepeat] = useState(false);
     const [shuffle, setShuffle] = useState(false);
@@ -137,7 +137,7 @@ export const MediaPlayer = () => {
 
             setTimeIndicator({
                 current: convertToMinute(audioTag.currentTime),
-                duration: convertToMinute(audioTag.duration || 0),
+                duration: convertToMinute(currentSong.duration),
             });
         }
         const interval = setInterval(changeBar, 1000);
@@ -224,7 +224,7 @@ export const MediaPlayer = () => {
                             let duration = audioTagRef.current.duration || 1;
                             audioTagRef.current.currentTime = parseInt(duration * progressPerc);
                         }}/>
-                    {timeIndicator.duration}
+                    {convertToMinute(currentSong.duration)}
                 </div>
 
             </div>
